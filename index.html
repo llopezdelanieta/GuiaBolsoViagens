@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Conversor de Moedas para Viagem</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-theme="dark">
+  <main class="app-shell">
+    <section class="app-card" aria-live="polite">
+      <div class="topbar">
+        <div class="header-copy">
+          <span class="eyebrow">Tech travel exchange</span>
+          <h1>Conversor de Moedas para Viagem</h1>
+          <p class="hero-text">
+            Toque na bandeira, preencha o valor em BRL e veja a conversão em tempo real.
+          </p>
+        </div>
+
+        <button id="themeToggle" class="theme-toggle" type="button" aria-label="Alternar tema">
+          <span class="theme-toggle__icon" aria-hidden="true">◐</span>
+          <span id="themeToggleText">Modo claro</span>
+        </button>
+      </div>
+
+      <div class="panel-header">
+        <div>
+          <span class="panel-badge">Tempo real</span>
+          <span id="statusText" class="status-text">Pronto para consultar</span>
+        </div>
+      </div>
+
+      <div class="flag-section">
+        <span class="section-label">Destino</span>
+        <div class="flag-grid" role="radiogroup" aria-label="Selecione o país de destino">
+          <button class="flag-card is-active" type="button" data-currency="ARS" aria-pressed="true" aria-label="Argentina">
+            <img class="flag-card__flag" src="imagens/argentina.png" alt="" aria-hidden="true">
+            <span class="flag-card__name">Argentina</span>
+          </button>
+          <button class="flag-card" type="button" data-currency="USD" aria-pressed="false" aria-label="Estados Unidos">
+            <img class="flag-card__flag" src="imagens/estados-unidos.png" alt="" aria-hidden="true">
+            <span class="flag-card__name">Estados Unidos</span>
+          </button>
+          <button class="flag-card" type="button" data-currency="CAD" aria-pressed="false" aria-label="Canadá">
+            <img class="flag-card__flag" src="imagens/canada.png" alt="" aria-hidden="true">
+            <span class="flag-card__name">Canadá</span>
+          </button>
+          <button class="flag-card" type="button" data-currency="GBP" aria-pressed="false" aria-label="Reino Unido">
+            <img class="flag-card__flag" src="imagens/inglaterra.png" alt="" aria-hidden="true">
+            <span class="flag-card__name">Reino Unido</span>
+          </button>
+          <button class="flag-card" type="button" data-currency="EUR" aria-pressed="false" aria-label="Espanha">
+            <img class="flag-card__flag" src="imagens/espanha.png" alt="" aria-hidden="true">
+            <span class="flag-card__name">Espanha</span>
+          </button>
+        </div>
+      </div>
+
+      <form class="converter-form" id="converterForm">
+        <label class="field">
+          <span>Valor em BRL</span>
+          <input
+            id="amount"
+            name="amount"
+            type="number"
+            min="0"
+            step="0.01"
+            inputmode="decimal"
+            placeholder="Ex.: 1500,00"
+            value="1000"
+          >
+        </label>
+
+        <label class="field">
+          <span id="targetAmountLabel">Valor em ARS</span>
+          <input
+            id="targetAmount"
+            name="targetAmount"
+            type="number"
+            min="0"
+            step="0.01"
+            inputmode="decimal"
+            placeholder="Ex.: 25000,00"
+          >
+        </label>
+      </form>
+
+      <div id="loadingMessage" class="feedback feedback--loading" hidden>
+        Carregando cotação mais recente...
+      </div>
+
+      <div id="errorMessage" class="feedback feedback--error" hidden role="alert">
+        Não foi possível buscar a cotação agora. Tente novamente em instantes.
+      </div>
+
+      <section class="result-panel">
+        <p class="result-label">Resultado da conversão</p>
+        <p id="convertedValue" class="result-value">--</p>
+        <p id="convertedHint" class="result-hint">
+          Digite um valor em BRL e toque em uma bandeira para escolher o destino.
+        </p>
+      </section>
+
+      <div class="info-stack">
+        <section class="detail-card">
+          <p class="detail-card__label">Cotação usada</p>
+          <p id="exchangeRate" class="detail-card__value">--</p>
+        </section>
+
+        <section class="detail-card">
+          <p class="detail-card__label">Última atualização</p>
+          <p id="lastUpdated" class="detail-card__value">--</p>
+        </section>
+      </div>
+
+      <button id="retryButton" class="retry-button" type="button">
+        Atualizar cotação
+      </button>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
