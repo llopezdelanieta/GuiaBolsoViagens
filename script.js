@@ -30,6 +30,21 @@ let quotes = {};
 let activeRequestId = 0;
 let selectedCurrency = "ARS";
 let activeInput = selectedCurrency;
+let usingSavedQuote = true;
+let currentConversion = null;
+const quotesStorageKey = 'guia-de-bolso-quotes';
+const conversionNotice = document.getElementById('conversionNotice');
+function validQuotes(data) {
+  return data && Object.keys(currencyConfig).every((code) => {
+    const quote = data[getQuoteKey(code)];
+    return quote && Number.isFinite(Number(quote.bid)) && Number(quote.bid) > 0
+      && Number.isFinite(Number(quote.timestamp)) && Number(quote.timestamp) > 0;
+  });
+}
+try {
+  const saved = JSON.parse(localStorage.getItem(quotesStorageKey) || 'null');
+  if (validQuotes(saved)) quotes = saved;
+} catch { /* Sem cotação salva disponível. */ }
 
 function formatCurrency(value, currency) {
   return new Intl.NumberFormat("pt-BR", {
@@ -105,12 +120,16 @@ function syncFlagSelection() {
 }
 
 function updateConversion() {
+  currentConversion = null;
+  document.getElementById('saveConversion').disabled = true;
+  document.getElementById('quoteMode').textContent = usingSavedQuote ? 'Cotação salva' : 'Tempo real';
   const quote = quotes[getQuoteKey(selectedCurrency)];
   const sourceInput = activeInput === "BRL" ? amountInput : targetAmountInput;
   const sourceAmount = parseLocalAmount(sourceInput.value);
 
   if (!quote) {
     exchangeRate.textContent = "--";
+    lastUpdated.textContent = '--';
     return;
   }
 
@@ -121,7 +140,7 @@ function updateConversion() {
     : new Date(Number(quote.timestamp) * 1000);
   lastUpdated.textContent = formatTimestamp(quoteDate);
 
-  if (!sourceInput.value || Number.isNaN(sourceAmount) || sourceAmount < 0) return;
+  if (!sourceInput.value || !Number.isFinite(sourceAmount) || sourceAmount < 0) return;
   const amountInBrl = activeInput === "BRL" ? sourceAmount : sourceAmount / rate;
   const amountInTarget = activeInput === "BRL" ? sourceAmount * rate : sourceAmount;
   const updatedAt = quote.create_date
@@ -136,6 +155,12 @@ function updateConversion() {
 
   exchangeRate.textContent = `1 BRL = ${formatRate(rate, selectedCurrency)}`;
   lastUpdated.textContent = formatTimestamp(updatedAt);
+  if (Number.isFinite(amountInBrl) && Number.isFinite(amountInTarget)) {
+    currentConversion = { currency: selectedCurrency, brl: amountInBrl, local: amountInTarget,
+      rate, quoteAt: quoteDate.toISOString(), source: activeInput === 'BRL' ? 'BRL' : selectedCurrency,
+      cached: usingSavedQuote };
+    document.getElementById('saveConversion').disabled = false;
+  }
 }
 
 async function fetchQuotes() {
@@ -145,19 +170,28 @@ async function fetchQuotes() {
   hideError();
 
   try {
-    const response = await fetch(apiUrl, { cache: "no-store" });
+    if (!navigator.onLine) throw new Error('Offline');
+    const response = await fetch(apiUrl, { cache: "no-store", signal: AbortSignal.timeout(12000) });
 
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}`);
     }
 
     const data = await response.json();
+    if (!validQuotes(data)) throw new Error('Cotação inválida');
 
     if (requestId !== activeRequestId) {
       return;
     }
 
     quotes = data;
+    usingSavedQuote = false;
+    try {
+      localStorage.setItem(quotesStorageKey, JSON.stringify(quotes));
+      conversionNotice.textContent = 'Última cotação salva automaticamente para uso offline.';
+    } catch {
+      conversionNotice.textContent = 'Cotação disponível, mas não foi possível salvá-la neste navegador.';
+    }
     setLoadingState(false);
     updateConversion();
   } catch (error) {
@@ -166,7 +200,13 @@ async function fetchQuotes() {
     }
 
     setLoadingState(false);
-    showError("Não foi possível obter a cotação em tempo real. Verifique sua conexão ou tente novamente.");
+    usingSavedQuote = true;
+    if (validQuotes(quotes)) {
+      conversionNotice.textContent = 'Usando a última cotação disponível. Confira a data de atualização acima.';
+      statusText.textContent = 'Usando cotação salva';
+    } else {
+      showError('Sem cotação salva. Conecte-se à internet para obter a primeira cotação.');
+    }
     updateConversion();
     console.error("Erro ao buscar cotações:", error);
   }
@@ -287,7 +327,22 @@ themeToggle.addEventListener("click", () => {
 
 initializeTheme();
 syncFlagSelection();
+updateConversion();
 fetchQuotes();
+window.addEventListener('online', fetchQuotes);
+window.addEventListener('offline', () => {
+  ++activeRequestId;
+  setLoadingState(false);
+  usingSavedQuote = true;
+  conversionNotice.textContent = 'Você está offline. Usando a última cotação disponível.';
+  updateConversion();
+});
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js').catch(() => {
+    conversionNotice.textContent = 'A cotação pode ser salva, mas não foi possível preparar a reabertura offline.';
+  });
+}
 
 // Mantém as cotações atualizadas durante o uso no celular.
 setInterval(fetchQuotes, refreshIntervalMs);
