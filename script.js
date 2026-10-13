@@ -120,6 +120,7 @@ function syncFlagSelection() {
 }
 
 function updateConversion() {
+  document.dispatchEvent(new Event('quotesUpdated'));
   currentConversion = null;
   document.getElementById('saveConversion').disabled = true;
   document.getElementById('quoteMode').textContent = usingSavedQuote ? 'Cotação salva' : 'Tempo real';

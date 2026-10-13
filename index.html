@@ -31,6 +31,7 @@
 
       <div class="app-tabs" role="tablist" aria-label="Seções do Guia de Bolso">
         <button id="converterTab" role="tab" aria-selected="true" aria-controls="converterPanel" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16m-4-4 4 4-4 4M20 17H4m4-4-4 4 4 4"/></svg>Conversor</button>
+        <button id="expensesTab" role="tab" aria-selected="false" aria-controls="expensesPanel" tabindex="-1" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h14v18l-3-2-4 2-4-2-3 2V3Zm3 5h8m-8 4h8m-8 4h4"/></svg>Gastos</button>
         <button id="exploreTab" role="tab" aria-selected="false" aria-controls="explorePanel" tabindex="-1" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m16 8-2 6-6 2 2-6 6-2Z"/></svg>Explorar</button>
         <button id="tasksTab" role="tab" aria-selected="false" aria-controls="tasksPanel" tabindex="-1" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 6 2 2 3-4m3 2h10M3 14l2 2 3-4m3 2h10M4 21h3m4 0h10"/></svg>Checklist</button>
         <button id="translatorTab" role="tab" aria-selected="false" aria-controls="translatorPanel" tabindex="-1" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h12M9 3v2M5 5c1 6 4 9 9 11M13 5c-1 6-4 9-9 11m10 5 4-10 4 10m-6-3h4"/></svg>Tradutor</button>
@@ -175,6 +176,36 @@
         <p id="historyEmpty" class="explore-note">Nenhuma conversão salva neste período.</p>
       </section>
       </div>
+      <div id="expensesPanel" class="tab-panel" role="tabpanel" aria-labelledby="expensesTab" hidden>
+        <div class="explore-intro"><h2>Gastos da viagem</h2><p>Registre suas despesas e acompanhe quanto gastou em cada dia.</p></div>
+        <div class="itinerary-day-row">
+          <label class="field expense-day"><span>Consultar dia</span><input id="expenseDay" type="date" required></label>
+          <button id="openExpenseForm" class="location-button" type="button" aria-label="Incluir gasto" title="Incluir gasto" aria-expanded="false" aria-controls="expenseForm">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+          </button>
+        </div>
+        <div class="expense-summary"><span>Total do dia · em reais</span><strong id="expenseTotal" role="status">R$ 0,00</strong><p id="expenseCount" class="explore-note"></p></div>
+        <form id="expenseForm" class="itinerary-form" hidden>
+          <label class="field itinerary-wide"><span>Descrição</span><input id="expenseDescription" type="text" maxlength="150" placeholder="Ex.: almoço, táxi, ingresso" required></label>
+          <label class="field"><span id="expenseAmountLabel">Valor na moeda do destino</span><input id="expenseAmount" type="text" inputmode="decimal" maxlength="16" placeholder="Ex.: 35,50" required></label>
+          <label class="field"><span>Equivalente em reais</span><input id="expenseBrlPreview" type="text" readonly placeholder="Aguardando valor e cotação"></label>
+          <label class="field itinerary-wide"><span>Data</span><input id="expenseDate" type="date" required></label>
+          <label class="field itinerary-wide"><span>Categoria</span><select id="expenseCategory"><option>Alimentação</option><option>Transporte</option><option>Hospedagem</option><option>Passeios</option><option>Compras</option><option>Outros</option></select></label>
+          <div class="itinerary-wide itinerary-actions">
+            <button id="expenseSave" class="retry-button" type="submit">Adicionar gasto</button>
+            <button id="expenseCancel" class="task-cancel" type="button">Cancelar</button>
+          </div>
+        </form>
+        <p id="expenseStatus" class="explore-note" role="status">Gastos salvos neste navegador.</p>
+        <button id="toggleExpenses" class="activities-toggle" type="button" aria-expanded="true" aria-controls="expenseEntries">
+          <span id="toggleExpensesLabel">Recolher lançamentos</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div id="expenseEntries">
+          <ul id="expenseList" class="expense-list" aria-label="Gastos do dia"></ul>
+          <p id="expenseEmpty" class="explore-note">Nenhum gasto registrado neste dia.</p>
+        </div>
+      </div>
       <div id="explorePanel" class="tab-panel" role="tabpanel" aria-labelledby="exploreTab" hidden>
         <div class="explore-intro">
           <h2>Descubra por perto</h2>
@@ -313,5 +344,6 @@
   <script src="conversion-history.js"></script>
   <script src="weather.js"></script>
   <script src="sos.js"></script>
+  <script src="expenses.js"></script>
 </body>
 </html>

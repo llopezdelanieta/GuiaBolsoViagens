@@ -435,6 +435,102 @@ body[data-theme="light"] .weather-forecast li::after {
   gap: 12px;
 }
 
+.expense-day {
+  min-width: 0;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.expense-day input {
+  min-width: 0;
+  max-width: 100%;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.expense-summary {
+  display: grid;
+  gap: 8px;
+  padding: 20px;
+  border: 1px solid var(--line-strong);
+  border-radius: 18px;
+  background: linear-gradient(120deg, var(--primary-glow), var(--surface-soft));
+}
+
+.expense-summary > strong {
+  font-size: clamp(1.6rem, 7vw, 2.2rem);
+  color: var(--primary);
+  overflow-wrap: anywhere;
+}
+
+.expense-summary p {
+  margin: 0;
+}
+
+.expense-list {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.expense-list li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface-soft);
+}
+
+.expense-copy {
+  display: grid;
+  gap: 6px;
+  overflow-wrap: anywhere;
+}
+
+.expense-copy span {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.expense-value {
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.expense-copy .expense-local {
+  color: var(--text);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (min-width: 360px) and (max-width: 699px) {
+  #expenseForm {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.expense-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 8px;
+}
+
+.expense-actions button {
+  min-height: 44px;
+  padding: 8px 14px;
+}
+
+#expensesPanel input[type="date"] {
+  min-width: 0;
+  max-width: 100%;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
 .translator-audio-actions {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
