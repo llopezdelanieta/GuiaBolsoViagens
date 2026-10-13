@@ -23,6 +23,11 @@
         </button>
       </div>
 
+      <div class="app-tabs" role="tablist" aria-label="Seções do Guia de Bolso">
+        <button id="converterTab" role="tab" aria-selected="true" aria-controls="converterPanel" type="button">Conversor</button>
+        <button id="exploreTab" role="tab" aria-selected="false" aria-controls="explorePanel" tabindex="-1" type="button">Explorar</button>
+      </div>
+      <div id="converterPanel" class="tab-panel" role="tabpanel" aria-labelledby="converterTab">
       <div class="panel-header">
         <span class="panel-badge">Tempo real</span>
         <div class="quote-summary">
@@ -121,9 +126,30 @@
       <button id="retryButton" class="retry-button" type="button">
         Atualizar cotação
       </button>
+      </div>
+      <div id="explorePanel" class="tab-panel" role="tabpanel" aria-labelledby="exploreTab" hidden>
+        <div class="explore-intro">
+          <h2>Descubra por perto</h2>
+          <p>Lugares até 3 km de você, organizados por proximidade.</p>
+        </div>
+        <button id="locateButton" class="retry-button" type="button">Usar minha localização</button>
+        <p class="explore-note">Ao continuar, sua localização será enviada ao serviço de busca do OpenStreetMap para encontrar lugares próximos.</p>
+        <div id="placeCategories" class="place-categories" role="group" aria-label="Categoria de lugares">
+          <button type="button" data-category="tourism" aria-pressed="true">Pontos turísticos</button>
+          <button type="button" data-category="restaurant" aria-pressed="false">Restaurantes</button>
+          <button type="button" data-category="bar" aria-pressed="false">Bares</button>
+          <button type="button" data-category="cafe" aria-pressed="false">Cafés</button>
+          <button type="button" data-category="park" aria-pressed="false">Parques</button>
+          <button type="button" data-category="pharmacy" aria-pressed="false">Farmácias</button>
+        </div>
+        <p id="placesStatus" class="explore-note" role="status">Ative a localização para descobrir os arredores.</p>
+        <div id="placesList" class="places-list" aria-busy="false"></div>
+        <p class="explore-note">Dados: <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">© OpenStreetMap contributors</a>. A cobertura varia por região; confirme horários antes de visitar.</p>
+      </div>
     </section>
   </main>
 
   <script src="script.js"></script>
+  <script src="explore.js"></script>
 </body>
 </html>

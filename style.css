@@ -41,6 +41,123 @@ body[data-theme="light"] {
   box-sizing: border-box;
 }
 
+.tab-panel[hidden] {
+  display: none;
+}
+
+.tab-panel {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+  position: relative;
+}
+
+.app-tabs {
+  position: relative;
+  display: flex;
+  gap: 6px;
+  padding: 5px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface-soft);
+}
+
+.app-tabs button {
+  flex: 1;
+  min-height: 42px;
+  border: 0;
+  border-radius: 11px;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.app-tabs button[aria-selected="true"] {
+  background: var(--primary-glow);
+  color: var(--text);
+}
+
+.explore-intro h2 {
+  margin: 0 0 6px;
+  font-size: 1.4rem;
+}
+
+.explore-intro p,
+.explore-note {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.78rem;
+  line-height: 1.6;
+}
+
+.place-categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.place-categories button {
+  min-height: 40px;
+  padding: 8px 12px;
+  border-radius: 20px;
+  border: 1px solid var(--line);
+  background: var(--surface-soft);
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.place-categories button[aria-pressed="true"] {
+  border-color: var(--primary);
+  color: var(--text);
+  background: var(--primary-glow);
+}
+
+.places-list {
+  display: grid;
+  gap: 10px;
+}
+
+.place-card {
+  padding: 16px;
+  background: var(--surface-soft);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+}
+
+.place-card h3 {
+  margin: 0;
+  font-size: 1rem;
+  overflow-wrap: anywhere;
+}
+
+.place-card p {
+  color: var(--muted);
+  font-size: 0.8rem;
+  margin: 8px 0;
+}
+
+.place-card a,
+.explore-note a {
+  color: var(--primary);
+}
+
+.place-card a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  font-size: 0.85rem;
+}
+
+.app-tabs button:focus-visible,
+.place-categories button:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
 html {
   color-scheme: dark;
 }
