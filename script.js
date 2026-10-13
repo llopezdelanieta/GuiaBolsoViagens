@@ -93,13 +93,14 @@ function syncFlagSelection() {
   selectedCountry.textContent = currencyConfig[selectedCurrency].country;
   const selectedFlag = [...flagButtons].find((button) => button.dataset.currency === selectedCurrency);
   document.getElementById("selectedCountryFlag").src = selectedFlag.querySelector("img").getAttribute("src");
+  document.getElementById("localAmountFlag").src = selectedFlag.querySelector("img").getAttribute("src");
   flagButtons.forEach((button) => {
     const isActive = button.dataset.currency === selectedCurrency;
     button.classList.toggle("is-active", isActive);
     button.setAttribute("aria-pressed", String(isActive));
   });
 
-  targetAmountLabel.textContent = `Valor em ${selectedCurrency}`;
+  targetAmountLabel.textContent = currencyConfig[selectedCurrency].currencyName;
   targetAmountInput.placeholder = `Ex.: ${selectedCurrency === "ARS" ? "25.000,00" : "200,00"}`;
 }
 

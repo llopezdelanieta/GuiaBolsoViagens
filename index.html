@@ -15,7 +15,10 @@
       <div class="topbar">
         <div class="header-copy">
           <span class="eyebrow">Tech travel exchange</span>
-          <h1>Guia de Bolso</h1>
+          <div class="brand-heading">
+            <img class="brand-logo" src="imagens/guia-de-bolso-logo.png" alt="" aria-hidden="true" width="48" height="48">
+            <h1>Guia de Bolso</h1>
+          </div>
         </div>
 
         <button id="themeToggle" class="theme-toggle" type="button" aria-label="Alternar tema">
@@ -24,8 +27,9 @@
       </div>
 
       <div class="app-tabs" role="tablist" aria-label="Seções do Guia de Bolso">
-        <button id="converterTab" role="tab" aria-selected="true" aria-controls="converterPanel" type="button">Conversor</button>
-        <button id="exploreTab" role="tab" aria-selected="false" aria-controls="explorePanel" tabindex="-1" type="button">Explorar</button>
+        <button id="converterTab" role="tab" aria-selected="true" aria-controls="converterPanel" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16m-4-4 4 4-4 4M20 17H4m4-4-4 4 4 4"/></svg>Conversor</button>
+        <button id="exploreTab" role="tab" aria-selected="false" aria-controls="explorePanel" tabindex="-1" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m16 8-2 6-6 2 2-6 6-2Z"/></svg>Explorar</button>
+        <button id="tasksTab" role="tab" aria-selected="false" aria-controls="tasksPanel" tabindex="-1" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 6 2 2 3-4m3 2h10M3 14l2 2 3-4m3 2h10M4 21h3m4 0h10"/></svg>Tarefas</button>
       </div>
       <div id="converterPanel" class="tab-panel" role="tabpanel" aria-labelledby="converterTab">
       <div class="panel-header">
@@ -73,7 +77,9 @@
       <form class="converter-form" id="converterForm">
         <div class="currency-fields">
         <label class="field" id="localCurrencyField">
-          <span id="targetAmountLabel">Valor em ARS</span>
+          <span id="targetAmountLabel">Peso argentino</span>
+          <div class="currency-input">
+          <img id="localAmountFlag" class="currency-input__flag" src="imagens/argentina.png" alt="" aria-hidden="true">
           <input
             id="targetAmount"
             name="targetAmount"
@@ -82,10 +88,13 @@
             placeholder="Ex.: 25.000,00"
             value="1.000,00"
           >
+          </div>
         </label>
 
         <label class="field" id="brlCurrencyField">
-          <span>Valor em real (BRL)</span>
+          <span>Real</span>
+          <div class="currency-input">
+          <img class="currency-input__flag" src="imagens/brasil.svg" alt="" aria-hidden="true">
           <input
             id="amount"
             name="amount"
@@ -93,6 +102,7 @@
             inputmode="decimal"
             placeholder="Ex.: 1.500,00"
           >
+          </div>
         </label>
         <button id="swapCurrencies" class="swap-currencies" type="button" aria-label="Inverter a posição dos campos de moeda" title="Inverter campos">
           <svg class="swap-currencies__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
@@ -155,10 +165,27 @@
         <div id="placesList" class="places-list" aria-busy="false"></div>
         <p class="explore-note">Dados: <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">© OpenStreetMap contributors</a>. A cobertura varia por região; confirme horários antes de visitar.</p>
       </div>
+      <div id="tasksPanel" class="tab-panel" role="tabpanel" aria-labelledby="tasksTab" hidden>
+        <div class="explore-intro">
+          <h2>Seu checklist do dia</h2>
+          <p>Organize o que fazer e marque cada conquista.</p>
+        </div>
+        <form id="taskForm" class="task-form">
+          <label class="field" for="taskInput"><span>Nova tarefa</span>
+            <input id="taskInput" type="text" placeholder="Ex.: conhecer a praça central" maxlength="200" required autocomplete="off">
+          </label>
+          <button type="submit" class="task-add" aria-label="Adicionar tarefa" title="Adicionar tarefa">+</button>
+        </form>
+        <p id="taskProgress" class="explore-note" role="status"></p>
+        <ul id="taskList" class="task-list" aria-label="Checklist de tarefas"></ul>
+        <p id="taskEmpty" class="explore-note">Sua lista está vazia. Adicione a primeira tarefa acima.</p>
+        <p id="taskStorageStatus" class="explore-note">Lista salva neste navegador.</p>
+      </div>
     </section>
   </main>
 
   <script src="script.js"></script>
   <script src="explore.js"></script>
+  <script src="tasks.js"></script>
 </body>
 </html>
