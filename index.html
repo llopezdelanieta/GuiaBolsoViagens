@@ -21,9 +21,12 @@
           </div>
         </div>
 
+        <div class="header-actions">
+        <button id="openSos" class="sos-button" type="button" aria-label="SOS: números de emergência" aria-haspopup="dialog">SOS</button>
         <button id="themeToggle" class="theme-toggle" type="button" aria-label="Alternar tema">
           <span id="themeToggleIcon" class="theme-toggle__icon" aria-hidden="true">☀</span>
         </button>
+        </div>
       </div>
 
       <div class="app-tabs" role="tablist" aria-label="Seções do Guia de Bolso">
@@ -31,6 +34,7 @@
         <button id="exploreTab" role="tab" aria-selected="false" aria-controls="explorePanel" tabindex="-1" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m16 8-2 6-6 2 2-6 6-2Z"/></svg>Explorar</button>
         <button id="tasksTab" role="tab" aria-selected="false" aria-controls="tasksPanel" tabindex="-1" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 6 2 2 3-4m3 2h10M3 14l2 2 3-4m3 2h10M4 21h3m4 0h10"/></svg>Checklist</button>
         <button id="translatorTab" role="tab" aria-selected="false" aria-controls="translatorPanel" tabindex="-1" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h12M9 3v2M5 5c1 6 4 9 9 11M13 5c-1 6-4 9-9 11m10 5 4-10 4 10m-6-3h4"/></svg>Tradutor</button>
+        <button id="weatherTab" role="tab" aria-selected="false" aria-controls="weatherPanel" tabindex="-1" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v2M4.9 4.9l1.4 1.4M2 12h2m14-5 1.4-1.4M20 12h2"/><circle cx="12" cy="11" r="4"/><path d="M7 21a4 4 0 1 1 1-7.9A5 5 0 1 1 17 21H7Z"/></svg>Clima</button>
       </div>
       <div id="converterPanel" class="tab-panel" role="tabpanel" aria-labelledby="converterTab">
       <div id="converterContent" class="tab-panel">
@@ -155,8 +159,15 @@
 
       </div>
       <section id="conversionHistory" class="tab-panel" aria-labelledby="historyTitle" hidden>
-        <button id="closeHistory" class="location-button history-back" type="button">← Voltar ao conversor</button>
-        <div class="explore-intro"><h2 id="historyTitle" tabindex="-1">Histórico de conversões</h2><p>Seus registros organizados por dia, do mais recente ao mais antigo.</p></div>
+        <div class="explore-intro">
+          <div class="history-heading">
+            <button id="closeHistory" class="location-button history-back" type="button" aria-label="Voltar ao conversor" title="Voltar ao conversor">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m12 5-7 7 7 7M5 12h14"/></svg>
+            </button>
+            <h2 id="historyTitle" tabindex="-1">Histórico de conversões</h2>
+          </div>
+          <p>Seus registros organizados por dia, do mais recente ao mais antigo.</p>
+        </div>
         <label class="field"><span>Filtrar por dia</span><input id="historyDay" type="date"></label>
         <button id="historyAllDays" class="task-cancel" type="button">Mostrar todos os dias</button>
         <p id="historyCount" class="explore-note" role="status"></p>
@@ -183,6 +194,7 @@
           <button type="button" data-category="cafe" aria-pressed="false">Cafés</button>
           <button type="button" data-category="park" aria-pressed="false">Parques</button>
           <button type="button" data-category="pharmacy" aria-pressed="false">Farmácias</button>
+          <button type="button" data-category="hospital" aria-pressed="false">Hospital</button>
           <button type="button" data-category="market" aria-pressed="false">Mercados</button>
         </div>
         <p id="placesStatus" class="explore-note" role="status">Ative a localização para descobrir os arredores.</p>
@@ -225,6 +237,35 @@
         </div>
         <p id="taskStorageStatus" class="explore-note">Lista salva neste navegador.</p>
       </div>
+      <div id="weatherPanel" class="tab-panel" role="tabpanel" aria-labelledby="weatherTab" hidden>
+        <div class="explore-intro"><h2>Clima e tempo</h2><p>Confira as condições atuais e planeje os próximos dias da viagem.</p></div>
+        <form id="weatherSearch" class="weather-search">
+        <button id="weatherLocate" class="location-button" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2.5"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3"/></svg>
+          <span class="location-button__content">
+            <span id="weatherLocationLabel">Usar minha localização</span>
+            <span id="weatherLocationState" class="location-state" role="status">Localização ainda não ativada</span>
+          </span>
+        </button>
+          <label class="field"><span>Buscar cidade</span><input id="weatherCity" type="search" placeholder="Ex.: São Paulo" minlength="2" maxlength="100" required></label>
+          <button class="location-button" type="submit">Buscar</button>
+        </form>
+        <p id="weatherStatus" class="explore-note" role="status">Use sua localização ou busque uma cidade para consultar o clima.</p>
+        <div id="weatherCities" class="weather-cities" aria-label="Cidades encontradas"></div>
+        <div id="weatherResult" hidden>
+          <div class="weather-current">
+            <h3 id="weatherPlace"></h3>
+            <p id="weatherTemperature" class="weather-temperature"></p>
+            <p id="weatherCondition"></p>
+            <div id="weatherDetails" class="weather-details"></div>
+            <p id="weatherUpdated" class="explore-note"></p>
+          </div>
+          <h3>Previsão para 5 dias</h3>
+          <ul id="weatherForecast" class="weather-forecast"></ul>
+          <button id="weatherRefresh" class="location-button" type="button">Atualizar clima</button>
+        </div>
+        <p class="explore-note">Dados meteorológicos: <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo</a>. Horários no fuso do local consultado.</p>
+      </div>
       <div id="translatorPanel" class="tab-panel" role="tabpanel" aria-labelledby="translatorTab" hidden>
         <form id="translatorForm" class="translator-form">
           <div class="translator-languages">
@@ -234,20 +275,43 @@
           </div>
           <label class="field"><span>Texto para traduzir</span><textarea id="translationSource" rows="4" maxlength="500" required placeholder="Ex.: Onde fica a estação mais próxima?"></textarea></label>
           <p id="translationCount" class="explore-note">0 / 500 bytes</p>
+          <div class="translator-audio-actions">
+            <button id="dictateText" class="location-button" type="button" aria-pressed="false">🎙️ <span>Ditar por voz</span></button>
+            <button id="speakSource" class="location-button" type="button" disabled>🔊 Ouvir texto</button>
+          </div>
           <button id="translateButton" class="retry-button" type="submit">Traduzir</button>
         </form>
         <p id="translationStatus" class="explore-note" role="status"></p>
         <label class="field"><span>Tradução</span><textarea id="translationResult" rows="4" readonly placeholder="A tradução aparecerá aqui."></textarea></label>
         <button id="copyTranslation" class="location-button" type="button" disabled>Copiar tradução</button>
+        <div class="translator-audio-actions">
+          <button id="speakTranslation" class="location-button" type="button" disabled>🔊 Ouvir tradução</button>
+          <button id="stopTranslationAudio" class="location-button" type="button" disabled>Parar áudio</button>
+        </div>
+        <p id="translationAudioStatus" class="explore-note" role="status"></p>
         <p class="explore-note">Tradução online por <a href="https://mymemory.translated.net/" target="_blank" rel="noopener noreferrer">MyMemory</a>, sujeita ao limite do serviço.</p>
       </div>
     </section>
   </main>
 
+  <dialog id="sosDialog" class="sos-dialog" aria-labelledby="sosTitle" aria-describedby="sosDescription">
+    <div class="history-heading">
+      <h2 id="sosTitle">SOS · Emergências</h2>
+      <form method="dialog"><button class="sos-close" aria-label="Fechar SOS" autofocus>×</button></form>
+    </div>
+    <p id="sosCountry"></p>
+    <p id="sosDescription" class="explore-note">Números do destino selecionado. Confira se você está neste país antes de ligar.</p>
+    <ul id="sosNumbers" class="sos-numbers"></ul>
+    <p class="explore-note">Toque no número para abrir o discador. Informe sua localização ao atendente.</p>
+    <a id="sosSource" target="_blank" rel="noopener noreferrer">Consultar fonte oficial</a>
+    <p class="explore-note">Verificado em 13/10/2026.</p>
+  </dialog>
   <script src="script.js"></script>
   <script src="explore.js"></script>
   <script src="tasks.js"></script>
   <script src="translator.js"></script>
   <script src="conversion-history.js"></script>
+  <script src="weather.js"></script>
+  <script src="sos.js"></script>
 </body>
 </html>

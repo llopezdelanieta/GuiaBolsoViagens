@@ -31,6 +31,7 @@ const filters = {
   cafe: '[amenity="cafe"]',
   park: '[leisure="park"]',
   pharmacy: '[amenity="pharmacy"]',
+  hospital: '[amenity="hospital"]',
   market: '[shop~"^(supermarket|convenience|grocery|greengrocer)$"]'
 };
 const categoryIcons = {
@@ -40,6 +41,7 @@ const categoryIcons = {
   cafe: 'M4 8h12v7a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4V8Zm12 0h2a3 3 0 0 1 0 6h-2M7 3v2m5-2v2M3 22h15',
   park: 'M12 2 6 10h3l-5 7h16l-5-7h3L12 2Zm0 15v5m-4 0h8',
   pharmacy: 'M9 3h6v6h6v6h-6v6H9v-6H3V9h6V3Z',
+  hospital: 'M4 21V3h16v18M2 21h20M9 7h6m-3-3v6M9 21v-6h6v6',
   market: 'M2 3h3l3 12h11l3-9H6M9 20h.01M18 20h.01'
 };
 categories.forEach((button) => {

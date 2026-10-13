@@ -1,6 +1,6 @@
-const CACHE = 'guia-de-bolso-offline-v1';
+const CACHE = 'guia-de-bolso-offline-v3';
 const ASSETS = ['./', './index.html', './style.css', './script.js', './explore.js', './tasks.js',
-  './translator.js', './conversion-history.js', './imagens/argentina.png', './imagens/brasil.svg',
+  './translator.js', './conversion-history.js', './weather.js', './sos.js', './imagens/argentina.png', './imagens/brasil.svg',
   './imagens/canada.png', './imagens/espanha.png', './imagens/estados-unidos.png',
   './imagens/inglaterra.png', './imagens/guia-de-bolso-logo.png'];
 self.addEventListener('install', (event) => {
