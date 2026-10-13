@@ -134,10 +134,11 @@
         </div>
         <button id="locateButton" class="location-button" type="button">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2.5"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3"/></svg>
-          <span id="locationButtonLabel">Usar minha localização</span>
+          <span class="location-button__content">
+            <span id="locationButtonLabel">Usar minha localização</span>
+            <span id="locationState" class="location-state" role="status">Localização ainda não ativada</span>
+          </span>
         </button>
-        <p id="locationState" class="location-state" role="status">Localização ainda não ativada</p>
-        <p class="explore-note">Ao continuar, sua localização será enviada ao serviço de busca do OpenStreetMap para encontrar lugares próximos.</p>
         <div id="placeCategories" class="place-categories" role="group" aria-label="Categoria de lugares">
           <button type="button" data-category="tourism" aria-pressed="true">Pontos turísticos</button>
           <button type="button" data-category="restaurant" aria-pressed="false">Restaurantes</button>
@@ -145,6 +146,7 @@
           <button type="button" data-category="cafe" aria-pressed="false">Cafés</button>
           <button type="button" data-category="park" aria-pressed="false">Parques</button>
           <button type="button" data-category="pharmacy" aria-pressed="false">Farmácias</button>
+          <button type="button" data-category="market" aria-pressed="false">Mercados</button>
         </div>
         <p id="placesStatus" class="explore-note" role="status">Ative a localização para descobrir os arredores.</p>
         <div id="placesList" class="places-list" aria-busy="false"></div>

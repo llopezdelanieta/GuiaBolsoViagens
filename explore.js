@@ -30,8 +30,32 @@ const filters = {
   bar: '[amenity~"^(bar|pub|biergarten)$"]',
   cafe: '[amenity="cafe"]',
   park: '[leisure="park"]',
-  pharmacy: '[amenity="pharmacy"]'
+  pharmacy: '[amenity="pharmacy"]',
+  market: '[shop~"^(supermarket|convenience|grocery|greengrocer)$"]'
 };
+const categoryIcons = {
+  tourism: 'M3 21h18M5 21V10h14v11M3 10l9-7 9 7M9 13v5m6-5v5',
+  restaurant: 'M5 3v6a3 3 0 0 0 6 0V3M8 3v18m12 0V3c-4 2-5 8 0 9',
+  bar: 'M4 3h16l-8 10-8-10Zm8 10v8m-5 0h10M7 7h10',
+  cafe: 'M4 8h12v7a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4V8Zm12 0h2a3 3 0 0 1 0 6h-2M7 3v2m5-2v2M3 22h15',
+  park: 'M12 2 6 10h3l-5 7h16l-5-7h3L12 2Zm0 15v5m-4 0h8',
+  pharmacy: 'M9 3h6v6h6v6h-6v6H9v-6H3V9h6V3Z',
+  market: 'M2 3h3l3 12h11l3-9H6M9 20h.01M18 20h.01'
+};
+categories.forEach((button) => {
+  const icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  icon.setAttribute('viewBox', '0 0 24 24');
+  icon.setAttribute('fill', 'none');
+  icon.setAttribute('stroke', 'currentColor');
+  icon.setAttribute('stroke-width', '1.8');
+  icon.setAttribute('stroke-linecap', 'round');
+  icon.setAttribute('stroke-linejoin', 'round');
+  icon.setAttribute('aria-hidden', 'true');
+  const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  path.setAttribute('d', categoryIcons[button.dataset.category]);
+  icon.append(path);
+  button.prepend(icon);
+});
 let locationCoords;
 let category = 'tourism';
 let searchController;
