@@ -501,16 +501,23 @@ body[data-theme="light"] .weather-forecast li::after {
   text-align: right;
 }
 
-.expense-copy .expense-local {
+.expense-local {
   color: var(--text);
   font-weight: 600;
   font-variant-numeric: tabular-nums;
 }
 
-@media (min-width: 360px) and (max-width: 699px) {
-  #expenseForm {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+.expense-values {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+.expense-values .expense-local {
+  color: var(--muted);
+  font-size: 0.8rem;
 }
 
 .expense-actions {
@@ -529,6 +536,121 @@ body[data-theme="light"] .weather-forecast li::after {
   max-width: 100%;
   appearance: none;
   -webkit-appearance: none;
+}
+
+@media (max-width: 699px) {
+  #expensesPanel {
+    gap: 18px;
+  }
+
+  #expensesPanel .explore-intro p {
+    font-size: 0.82rem;
+    line-height: 1.5;
+  }
+
+  #expensesPanel .expense-summary {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: center;
+    gap: 6px 12px;
+    padding: 14px;
+    border-radius: 14px;
+  }
+
+  .expense-summary > span {
+    font-size: 0.75rem;
+    line-height: 1.5;
+  }
+
+  #expensesPanel .expense-summary > strong {
+    text-align: right;
+    font-size: clamp(1.1rem, 5vw, 1.5rem);
+  }
+
+  .expense-summary > p {
+    grid-column: 1 / -1;
+    font-size: 0.72rem;
+  }
+
+  #expenseForm {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+    padding: 14px;
+  }
+
+  #expenseForm .field {
+    gap: 7px;
+  }
+
+  #expenseForm .field > span {
+    font-size: 0.78rem;
+  }
+
+  #expenseForm input,
+  #expenseForm select {
+    height: 48px;
+    min-height: 48px;
+    padding: 0 10px;
+    border-radius: 12px;
+    font-size: 1rem;
+  }
+
+  #expenseForm .itinerary-actions {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  #expenseForm .itinerary-actions button {
+    min-width: 0;
+    min-height: 48px;
+    padding: 8px 12px;
+    font-size: 0.8rem;
+    border-radius: 12px;
+  }
+
+  #expenseStatus {
+    margin: 0;
+    font-size: 0.72rem;
+  }
+
+  .expense-list {
+    gap: 12px;
+  }
+
+  .expense-list li {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 12px;
+    padding: 12px;
+  }
+
+  .expense-copy > strong,
+  .expense-value {
+    font-size: 0.88rem;
+    line-height: 1.4;
+  }
+
+  .expense-copy > span,
+  .expense-values .expense-local {
+    font-size: 0.72rem;
+  }
+
+  .expense-actions {
+    justify-content: flex-end;
+    gap: 12px;
+    padding-top: 8px;
+    border-top: 1px solid var(--line);
+  }
+
+  .expense-actions button {
+    padding: 6px 10px;
+    font-size: 0.75rem;
+  }
+}
+
+@media (min-width: 400px) and (max-width: 699px) {
+  #expenseForm {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 .translator-audio-actions {
@@ -583,6 +705,11 @@ body[data-theme="light"] .weather-forecast li::after {
   background: var(--surface-strong);
   resize: vertical;
   min-height: 110px;
+  line-height: 1.5;
+}
+
+#translatorPanel textarea {
+  min-height: 0;
   line-height: 1.5;
 }
 

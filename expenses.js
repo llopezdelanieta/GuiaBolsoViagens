@@ -99,10 +99,12 @@
       const local = document.createElement('span');
       local.className = 'expense-local';
       local.textContent = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: item.currency || 'BRL' }).format((item.localCents ?? item.cents) / 100);
-      text.append(local);
       const value = document.createElement('strong');
       value.className = 'expense-value';
       value.textContent = money(item.cents);
+      const values = document.createElement('div');
+      values.className = 'expense-values';
+      values.append(local, value);
       const actions = document.createElement('div');
       actions.className = 'expense-actions';
       const edit = document.createElement('button');
@@ -133,7 +135,7 @@
         render();
       });
       actions.append(edit, remove);
-      row.append(text, value, actions);
+      row.append(text, values, actions);
       list.append(row);
     });
   }

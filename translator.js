@@ -6,30 +6,38 @@
   const result = get('translationResult');
   const status = get('translationStatus');
   const button = get('translateButton');
-  const copy = get('copyTranslation');
   const speakSource = get('speakSource');
   const speakTranslation = get('speakTranslation');
   const stopAudio = get('stopTranslationAudio');
   const dictate = get('dictateText');
   const audioStatus = get('translationAudioStatus');
   const synthesis = window.speechSynthesis;
+  const canSpeak = Boolean(synthesis && window.SpeechSynthesisUtterance);
+  let voices = [];
+  function refreshVoices() { voices = synthesis?.getVoices() || []; }
+  refreshVoices();
+  synthesis?.addEventListener('voiceschanged', refreshVoices);
   const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   const speechLanguages = { pt: 'pt-BR', es: 'es-ES', en: 'en-US', fr: 'fr-FR', it: 'it-IT', de: 'de-DE' };
   let recognition;
   let utterance;
+  let speechTimer;
+  let recognitionTimer;
   function syncAudio() {
-    speakSource.disabled = !synthesis || !input.value.trim();
-    speakTranslation.disabled = !synthesis || !result.value.trim();
+    speakSource.disabled = !canSpeak || !input.value.trim();
+    speakTranslation.disabled = !canSpeak || !result.value.trim();
   }
   function stopSpeaking() {
     utterance = null;
-    synthesis?.cancel();
+    clearTimeout(speechTimer);
+    if (synthesis?.speaking || synthesis?.pending) synthesis.cancel();
     stopAudio.disabled = true;
   }
   function stopDictation() {
     if (!recognition) return;
     const active = recognition;
     recognition = null;
+    clearTimeout(recognitionTimer);
     active.abort();
     dictate.setAttribute('aria-pressed', 'false');
     dictate.querySelector('span').textContent = 'Ditar por voz';
@@ -37,36 +45,62 @@
   function speak(text, language) {
     stopDictation();
     stopSpeaking();
-    if (!text.trim() || !synthesis) return;
-    const speech = new SpeechSynthesisUtterance(text);
+    if (!text.trim() || !canSpeak) return;
+    const speech = new window.SpeechSynthesisUtterance(text.trim());
     utterance = speech;
     speech.lang = speechLanguages[language];
-    const voices = synthesis.getVoices();
+    refreshVoices();
     const voice = voices.find((item) => item.lang.toLowerCase() === speech.lang.toLowerCase())
       || voices.find((item) => item.lang.split('-')[0] === language);
     if (voice) speech.voice = voice;
+    speech.onstart = () => {
+      if (utterance !== speech) return;
+      clearTimeout(speechTimer);
+      audioStatus.textContent = 'Reproduzindo áudio…';
+    };
     speech.onend = () => {
       if (utterance !== speech) return;
+      clearTimeout(speechTimer);
       stopAudio.disabled = true;
       audioStatus.textContent = 'Leitura concluída.';
     };
-    speech.onerror = () => {
+    speech.onerror = (event) => {
       if (utterance !== speech) return;
+      clearTimeout(speechTimer);
       stopAudio.disabled = true;
-      audioStatus.textContent = 'Não foi possível reproduzir o áudio neste idioma.';
+      audioStatus.textContent = event.error === 'not-allowed'
+        ? 'O Safari bloqueou o áudio. Abra a página diretamente no navegador e toque em Ouvir novamente.'
+        : 'Não foi possível reproduzir o áudio. Confira o volume e a disponibilidade de uma voz para este idioma no dispositivo.';
     };
     stopAudio.disabled = false;
-    audioStatus.textContent = 'Reproduzindo áudio…';
-    synthesis.speak(speech);
+    audioStatus.textContent = 'Iniciando áudio…';
+    speechTimer = setTimeout(() => {
+      if (utterance !== speech) return;
+      stopSpeaking();
+      audioStatus.textContent = 'O áudio não iniciou. Confira o volume, abra no Safari e toque em Ouvir novamente.';
+    }, 10000);
+    try {
+      synthesis.speak(speech);
+      if (synthesis.paused) synthesis.resume();
+    } catch {
+      stopSpeaking();
+      audioStatus.textContent = 'Não foi possível iniciar o áudio neste navegador.';
+    }
   }
   speakSource.addEventListener('click', () => speak(input.value, source.value));
   speakTranslation.addEventListener('click', () => speak(result.value, target.value));
   stopAudio.addEventListener('click', () => { stopSpeaking(); audioStatus.textContent = 'Áudio interrompido.'; });
   dictate.disabled = !Recognition;
   audioStatus.textContent = !Recognition ? 'A entrada por voz não está disponível neste navegador.'
-    : 'Toque em Ditar por voz e permita o microfone para transformar sua fala em texto.';
-  if (!synthesis) audioStatus.textContent += ' A leitura em voz alta não está disponível neste navegador.';
+    : '';
+  if (!canSpeak) audioStatus.textContent += ' A leitura em voz alta não está disponível neste navegador.';
   dictate.addEventListener('click', () => {
+    if (!window.isSecureContext) {
+      audioStatus.textContent = 'O microfone precisa de HTTPS. No celular, endereços locais como http://192.168… bloqueiam o recurso. Use o microfone do teclado para ditar no campo.';
+      input.focus();
+      return;
+    }
+    if (!Recognition) return;
     if (recognition) { recognition.stop(); return; }
     stopSpeaking();
     const active = new Recognition();
@@ -77,7 +111,15 @@
     const original = input.value.trim();
     dictate.setAttribute('aria-pressed', 'true');
     dictate.querySelector('span').textContent = 'Parar ditado';
-    audioStatus.textContent = 'Ouvindo… Fale no idioma de origem selecionado.';
+    audioStatus.textContent = 'Ativando microfone… Permita o acesso quando solicitado.';
+    active.onstart = () => {
+      if (recognition === active) audioStatus.textContent = 'Ouvindo… Fale no idioma de origem selecionado.';
+    };
+    recognitionTimer = setTimeout(() => {
+      if (recognition !== active) return;
+      stopDictation();
+      audioStatus.textContent = 'O ditado não respondeu. Abra no Safari, confira a Siri e a permissão do microfone ou use o microfone do teclado.';
+    }, 30000);
     active.onresult = (event) => {
       if (recognition !== active) return;
       const transcript = Array.from(event.results).filter((item) => item.isFinal).map((item) => item[0].transcript).join(' ');
@@ -93,16 +135,23 @@
     };
     active.onerror = (event) => {
       if (recognition !== active) return;
-      audioStatus.textContent = ['not-allowed', 'service-not-allowed'].includes(event.error)
-        ? 'Permita o microfone nas configurações do navegador e tente novamente.'
-        : 'Não foi possível reconhecer a fala. Verifique o microfone e a conexão e tente novamente.';
+      const messages = {
+        'not-allowed': 'Permita o microfone para este site nas configurações do Safari e tente novamente.',
+        'service-not-allowed': 'O serviço de ditado está indisponível. No iPhone, confira se a Siri está ativada e abra diretamente no Safari.',
+        'audio-capture': 'Microfone indisponível. Confira as permissões e feche outros aplicativos que estejam usando o microfone.',
+        network: 'O serviço de voz não respondeu. Confira sua conexão e se a Siri está ativada.',
+        'no-speech': 'Nenhuma fala detectada. Toque em Ditar por voz e tente novamente.'
+      };
+      audioStatus.textContent = messages[event.error] || 'Não foi possível reconhecer a fala. Use o microfone do teclado para ditar no campo.';
+      stopDictation();
     };
     active.onend = () => {
       if (recognition !== active) return;
       recognition = null;
+      clearTimeout(recognitionTimer);
       dictate.setAttribute('aria-pressed', 'false');
       dictate.querySelector('span').textContent = 'Ditar por voz';
-      if (audioStatus.textContent.startsWith('Ouvindo')) audioStatus.textContent = 'Ditado encerrado. Toque no microfone para tentar novamente.';
+      if (/^(Ouvindo|Ativando)/.test(audioStatus.textContent)) audioStatus.textContent = 'Ditado encerrado. Toque no microfone para tentar novamente.';
     };
     try { active.start(); }
     catch { stopDictation(); audioStatus.textContent = 'Não foi possível iniciar o microfone. Tente novamente.'; }
@@ -126,7 +175,6 @@
     requestId++;
     controller?.abort();
     result.value = '';
-    copy.disabled = true;
     button.disabled = false;
     button.textContent = 'Traduzir';
     button.removeAttribute('aria-busy');
@@ -138,6 +186,9 @@
     syncAudio();
   }
   input.addEventListener('input', reset);
+  input.addEventListener('change', reset);
+  window.addEventListener('pageshow', syncAudio);
+  get('translatorTab').addEventListener('click', () => { refreshVoices(); syncAudio(); });
   source.addEventListener('change', reset);
   target.addEventListener('change', reset);
   get('swapLanguages').addEventListener('click', () => {
@@ -152,7 +203,6 @@
     if (!text || bytes() > 500) { input.reportValidity(); return; }
     if (source.value === target.value) {
       result.value = text;
-      copy.disabled = false;
       syncAudio();
       status.textContent = 'Os idiomas selecionados são iguais.';
       return;
@@ -175,7 +225,6 @@
       if (id !== requestId) return;
       result.value = data.responseData.translatedText;
       result.lang = target.value;
-      copy.disabled = false;
       syncAudio();
       status.textContent = 'Tradução concluída.';
     } catch {
@@ -188,16 +237,6 @@
         button.removeAttribute('aria-busy');
         status.classList.remove('is-loading');
       }
-    }
-  });
-  copy.addEventListener('click', async () => {
-    try {
-      await navigator.clipboard.writeText(result.value);
-      status.textContent = 'Tradução copiada!';
-    } catch {
-      result.focus();
-      result.select();
-      status.textContent = 'Selecionei o texto. Use a opção Copiar do seu dispositivo.';
     }
   });
 })();

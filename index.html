@@ -188,7 +188,7 @@
         <form id="expenseForm" class="itinerary-form" hidden>
           <label class="field itinerary-wide"><span>Descrição</span><input id="expenseDescription" type="text" maxlength="150" placeholder="Ex.: almoço, táxi, ingresso" required></label>
           <label class="field"><span id="expenseAmountLabel">Valor na moeda do destino</span><input id="expenseAmount" type="text" inputmode="decimal" maxlength="16" placeholder="Ex.: 35,50" required></label>
-          <label class="field"><span>Equivalente em reais</span><input id="expenseBrlPreview" type="text" readonly placeholder="Aguardando valor e cotação"></label>
+          <label class="field"><span>Em reais</span><input id="expenseBrlPreview" type="text" readonly placeholder="—"></label>
           <label class="field itinerary-wide"><span>Data</span><input id="expenseDate" type="date" required></label>
           <label class="field itinerary-wide"><span>Categoria</span><select id="expenseCategory"><option>Alimentação</option><option>Transporte</option><option>Hospedagem</option><option>Passeios</option><option>Compras</option><option>Outros</option></select></label>
           <div class="itinerary-wide itinerary-actions">
@@ -304,7 +304,7 @@
             <button id="swapLanguages" class="language-swap" type="button" aria-label="Inverter idiomas" title="Inverter idiomas">⇄</button>
             <label class="field"><span>Para</span><select id="targetLanguage" aria-label="Idioma da tradução"></select></label>
           </div>
-          <label class="field"><span>Texto para traduzir</span><textarea id="translationSource" rows="4" maxlength="500" required placeholder="Ex.: Onde fica a estação mais próxima?"></textarea></label>
+          <label class="field"><span>Texto para traduzir</span><textarea id="translationSource" rows="2" maxlength="500" required placeholder="Ex.: Onde fica a estação mais próxima?"></textarea></label>
           <p id="translationCount" class="explore-note">0 / 500 bytes</p>
           <div class="translator-audio-actions">
             <button id="dictateText" class="location-button" type="button" aria-pressed="false">🎙️ <span>Ditar por voz</span></button>
@@ -313,8 +313,7 @@
           <button id="translateButton" class="retry-button" type="submit">Traduzir</button>
         </form>
         <p id="translationStatus" class="explore-note" role="status"></p>
-        <label class="field"><span>Tradução</span><textarea id="translationResult" rows="4" readonly placeholder="A tradução aparecerá aqui."></textarea></label>
-        <button id="copyTranslation" class="location-button" type="button" disabled>Copiar tradução</button>
+        <label class="field"><span>Tradução</span><textarea id="translationResult" rows="2" readonly placeholder="A tradução aparecerá aqui."></textarea></label>
         <div class="translator-audio-actions">
           <button id="speakTranslation" class="location-button" type="button" disabled>🔊 Ouvir tradução</button>
           <button id="stopTranslationAudio" class="location-button" type="button" disabled>Parar áudio</button>
