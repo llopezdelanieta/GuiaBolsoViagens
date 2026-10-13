@@ -26,7 +26,9 @@
     controller = new AbortController();
     const id = ++requestId;
     status.textContent = message;
+    status.classList.add('is-loading');
     get('weatherPanel').setAttribute('aria-busy', 'true');
+    get('weatherCities').setAttribute('aria-busy', 'true');
     result.hidden = true;
     get('weatherCities').replaceChildren();
     return { id, signal: controller.signal };
@@ -39,7 +41,10 @@
   }
 
   function finish(id) {
-    if (id === requestId) get('weatherPanel').setAttribute('aria-busy', 'false');
+    if (id !== requestId) return;
+    get('weatherPanel').setAttribute('aria-busy', 'false');
+    get('weatherCities').setAttribute('aria-busy', 'false');
+    status.classList.remove('is-loading');
   }
 
   function fail(id, signal) {
@@ -54,7 +59,7 @@
       const params = new URLSearchParams({ latitude: place.latitude, longitude: place.longitude,
         current: 'temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,wind_speed_10m',
         daily: 'weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max',
-        timezone: 'auto', forecast_days: '5' });
+        timezone: 'auto', forecast_days: '6' });
       const data = await json(`https://api.open-meteo.com/v1/forecast?${params}`, signal);
       if (id !== requestId) return;
       if (!data.current || !Array.isArray(data.daily?.time)) throw new Error('Dados incompletos');
@@ -77,6 +82,7 @@
       const forecast = get('weatherForecast');
       forecast.replaceChildren();
       data.daily.time.forEach((day, i) => {
+        if (i === 0 || i > 5) return;
         const row = document.createElement('li');
         const code = data.daily.weather_code?.[i];
         const minimum = data.daily.temperature_2m_min?.[i];
@@ -87,14 +93,33 @@
         const title = document.createElement('strong');
         title.textContent = new Intl.DateTimeFormat('pt-BR', { weekday: 'short', day: '2-digit', month: '2-digit', timeZone: 'UTC' }).format(new Date(`${day}T12:00:00Z`));
         const description = document.createElement('span');
-        description.textContent = condition(code);
+        description.className = 'forecast-condition';
+        const icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        icon.setAttribute('viewBox', '0 0 24 24');
+        icon.setAttribute('fill', 'none');
+        icon.setAttribute('stroke', 'currentColor');
+        icon.setAttribute('stroke-width', '1.6');
+        icon.setAttribute('stroke-linecap', 'round');
+        icon.setAttribute('stroke-linejoin', 'round');
+        icon.setAttribute('aria-hidden', 'true');
+        const paths = {
+          sunny: 'M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z',
+          cloudy: 'M7 19a4 4 0 1 1 1-7.9A5 5 0 1 1 17 19H7Z',
+          rain: 'M7 16a4 4 0 1 1 1-7.9A5 5 0 1 1 17 16M8 19l-1 2m6-2-1 2m6-2-1 2',
+          cold: 'M12 2v20M3.3 7l17.4 10M3.3 17 20.7 7M9 4l3 3 3-3M9 20l3-3 3 3M4 10l4-1-1-4m10 14-1-4 4-1M4 14l4 1-1 4M17 5l-1 4 4 1'
+        };
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        const iconType = wet ? 'rain' : snow ? 'cold' : code === 0 ? 'sunny' : 'cloudy';
+        path.setAttribute('d', paths[iconType]);
+        icon.append(path);
+        description.append(icon, document.createTextNode(condition(code).replace(/^[^\p{L}]+/u, '')));
         const temperatures = document.createElement('span');
         temperatures.textContent = `${number(data.daily.temperature_2m_min?.[i], '°')} / ${number(data.daily.temperature_2m_max?.[i], '°')} · Chuva: ${number(data.daily.precipitation_probability_max?.[i], '%')}`;
         row.append(title, description, temperatures);
         forecast.append(row);
       });
       result.hidden = false;
-      status.textContent = `Clima atualizado para ${place.name}.`;
+      status.textContent = '';
     } catch { fail(id, signal); }
     finally { finish(id); }
   }
