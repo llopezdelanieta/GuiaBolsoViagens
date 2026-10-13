@@ -109,17 +109,19 @@ function updateConversion() {
   const sourceInput = activeInput === "BRL" ? amountInput : targetAmountInput;
   const sourceAmount = parseLocalAmount(sourceInput.value);
 
-  if (!sourceInput.value || Number.isNaN(sourceAmount) || sourceAmount < 0) {
-    exchangeRate.textContent = "--";
-    return;
-  }
-
   if (!quote) {
     exchangeRate.textContent = "--";
     return;
   }
 
   const rate = Number(quote.bid);
+  exchangeRate.textContent = `1 BRL = ${formatRate(rate, selectedCurrency)}`;
+  const quoteDate = quote.create_date
+    ? new Date(quote.create_date.replace(" ", "T"))
+    : new Date(Number(quote.timestamp) * 1000);
+  lastUpdated.textContent = formatTimestamp(quoteDate);
+
+  if (!sourceInput.value || Number.isNaN(sourceAmount) || sourceAmount < 0) return;
   const amountInBrl = activeInput === "BRL" ? sourceAmount : sourceAmount / rate;
   const amountInTarget = activeInput === "BRL" ? sourceAmount * rate : sourceAmount;
   const updatedAt = quote.create_date
@@ -262,6 +264,10 @@ destinationFlags.addEventListener("keydown", (event) => {
 
 flagButtons.forEach((button) => {
   button.addEventListener("click", () => {
+    if (selectedCurrency !== button.dataset.currency) {
+      amountInput.value = "";
+      targetAmountInput.value = "";
+    }
     selectedCurrency = button.dataset.currency;
     activeInput = selectedCurrency;
     syncFlagSelection();
