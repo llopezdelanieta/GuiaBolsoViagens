@@ -78,6 +78,22 @@ body[data-theme="light"] {
   gap: 10px;
 }
 
+.history-days {
+  display: grid;
+  gap: 18px;
+}
+
+.history-day-title {
+  margin: 0 0 10px;
+  font-size: 0.85rem;
+  color: var(--muted);
+  text-transform: capitalize;
+}
+
+.history-back {
+  justify-content: flex-start;
+}
+
 .history-heading h2 {
   font-size: 1.2rem;
 }

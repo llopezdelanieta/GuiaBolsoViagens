@@ -33,6 +33,7 @@
         <button id="translatorTab" role="tab" aria-selected="false" aria-controls="translatorPanel" tabindex="-1" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h12M9 3v2M5 5c1 6 4 9 9 11M13 5c-1 6-4 9-9 11m10 5 4-10 4 10m-6-3h4"/></svg>Tradutor</button>
       </div>
       <div id="converterPanel" class="tab-panel" role="tabpanel" aria-labelledby="converterTab">
+      <div id="converterContent" class="tab-panel">
       <div class="flag-section destination-summary">
         <button id="destinationToggle" class="destination-toggle" data-currency="ARS" type="button" aria-expanded="false" aria-controls="destinationFlags">
           <span class="section-label">Destino</span>
@@ -146,6 +147,16 @@
         Atualizar cotação
       </button>
       </div>
+      <section id="conversionHistory" class="tab-panel" aria-labelledby="historyTitle" hidden>
+        <button id="closeHistory" class="location-button history-back" type="button">← Voltar ao conversor</button>
+        <div class="explore-intro"><h2 id="historyTitle" tabindex="-1">Histórico de conversões</h2><p>Seus registros organizados por dia, do mais recente ao mais antigo.</p></div>
+        <label class="field"><span>Filtrar por dia</span><input id="historyDay" type="date"></label>
+        <button id="historyAllDays" class="task-cancel" type="button">Mostrar todos os dias</button>
+        <p id="historyCount" class="explore-note" role="status"></p>
+        <div id="historyList" class="history-days"></div>
+        <p id="historyEmpty" class="explore-note">Nenhuma conversão salva neste período.</p>
+      </section>
+      </div>
       <div id="explorePanel" class="tab-panel" role="tabpanel" aria-labelledby="exploreTab" hidden>
         <div class="explore-intro">
           <h2>Descubra por perto</h2>
@@ -230,12 +241,6 @@
   <script src="explore.js"></script>
   <script src="tasks.js"></script>
   <script src="translator.js"></script>
-  <dialog id="conversionHistory" class="history-dialog" aria-labelledby="historyTitle">
-    <div class="history-heading"><h2 id="historyTitle">Conversões salvas</h2><button id="closeHistory" class="task-remove" type="button" aria-label="Fechar histórico">×</button></div>
-    <p class="explore-note">Salvas neste navegador, com a cotação usada em cada conversão.</p>
-    <ul id="historyList" class="task-list"></ul>
-    <p id="historyEmpty" class="explore-note">Nenhuma conversão salva ainda.</p>
-  </dialog>
   <script src="conversion-history.js"></script>
 </body>
 </html>
