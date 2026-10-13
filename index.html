@@ -132,7 +132,11 @@
           <h2>Descubra por perto</h2>
           <p>Lugares até 3 km de você, organizados por proximidade.</p>
         </div>
-        <button id="locateButton" class="retry-button" type="button">Usar minha localização</button>
+        <button id="locateButton" class="location-button" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2.5"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3"/></svg>
+          <span id="locationButtonLabel">Usar minha localização</span>
+        </button>
+        <p id="locationState" class="location-state" role="status">Localização ainda não ativada</p>
         <p class="explore-note">Ao continuar, sua localização será enviada ao serviço de busca do OpenStreetMap para encontrar lugares próximos.</p>
         <div id="placeCategories" class="place-categories" role="group" aria-label="Categoria de lugares">
           <button type="button" data-category="tourism" aria-pressed="true">Pontos turísticos</button>

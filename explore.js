@@ -19,6 +19,8 @@ tabs.forEach((tab, index) => {
 });
 
 const locateButton = document.getElementById('locateButton');
+const locationButtonLabel = document.getElementById('locationButtonLabel');
+const locationState = document.getElementById('locationState');
 const placesStatus = document.getElementById('placesStatus');
 const placesList = document.getElementById('placesList');
 const categories = [...document.querySelectorAll('[data-category]')];
@@ -85,6 +87,7 @@ async function searchPlaces() {
   const key = `${locationCoords.latitude},${locationCoords.longitude}:${category}`;
   placesList.replaceChildren();
   placesList.setAttribute('aria-busy', 'true');
+  placesStatus.classList.add('is-loading');
   placesStatus.textContent = 'Buscando lugares próximos…';
   const timeout = setTimeout(() => controller.abort(), 30000);
   try {
@@ -106,7 +109,10 @@ async function searchPlaces() {
     if (searchController === controller) placesStatus.textContent = 'Não foi possível buscar os lugares agora. Tente novamente ou escolha outra categoria.';
   } finally {
     clearTimeout(timeout);
-    if (searchController === controller) placesList.setAttribute('aria-busy', 'false');
+    if (searchController === controller) {
+      placesList.setAttribute('aria-busy', 'false');
+      placesStatus.classList.remove('is-loading');
+    }
   }
 }
 
@@ -116,14 +122,31 @@ locateButton.addEventListener('click', () => {
     return;
   }
   locateButton.disabled = true;
+  locateButton.setAttribute('aria-busy', 'true');
+  locationButtonLabel.textContent = 'Localizando…';
+  locationState.dataset.state = 'pending';
+  locationState.textContent = 'Obtendo uma posição atualizada…';
+  placesStatus.classList.add('is-loading');
   placesStatus.textContent = 'Obtendo sua localização…';
   navigator.geolocation.getCurrentPosition((position) => {
     locationCoords = position.coords;
     locateButton.disabled = false;
-    locateButton.textContent = 'Atualizar minha localização';
+    locateButton.setAttribute('aria-busy', 'false');
+    locationButtonLabel.textContent = 'Atualizar minha localização';
+    locateButton.dataset.ready = 'true';
+    locationState.dataset.state = 'ready';
+    const time = new Intl.DateTimeFormat('pt-BR', { hour: '2-digit', minute: '2-digit' }).format(new Date(position.timestamp));
+    locationState.textContent = `✓ Localização ativa · atualizada às ${time}`;
     searchPlaces();
   }, (error) => {
     locateButton.disabled = false;
+    locateButton.setAttribute('aria-busy', 'false');
+    locationButtonLabel.textContent = 'Tentar localização novamente';
+    locationState.dataset.state = 'error';
+    locationState.textContent = locationCoords
+      ? 'Não foi possível atualizar · usando a posição anterior'
+      : 'Localização indisponível · tente novamente';
+    placesStatus.classList.remove('is-loading');
     placesStatus.textContent = error.code === 1
       ? 'Permita o acesso à localização nas configurações do navegador e tente novamente.'
       : 'Não foi possível obter sua localização. Verifique o GPS e tente novamente.';
