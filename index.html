@@ -129,8 +129,18 @@
       </form>
 
       <div class="conversion-actions">
-        <button id="saveConversion" class="location-button" type="button" disabled>Salvar conversão</button>
-        <button id="openHistory" class="location-button" type="button">Histórico</button>
+        <button id="saveConversion" class="location-button" type="button" disabled>
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12l4 4v12a2 2 0 0 1-2 2Z"/><path d="M7 3v6h10V3M7 21v-8h10v8"/></svg>
+          <span>Salvar conversão</span>
+        </button>
+        <button id="openHistory" class="location-button" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 11a9 9 0 1 1 2.6 7.4M3 4v7h7M12 7v5l3 2"/></svg>
+          <span>Histórico</span>
+        </button>
+        <button id="retryButton" class="retry-button" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20 7a9 9 0 0 0-15-1L3 9m0-6v6h6M4 17a9 9 0 0 0 15 1l2-3m0 6v-6h-6"/></svg>
+          <span>Atualizar cotação</span>
+        </button>
       </div>
       <p id="conversionNotice" class="explore-note" role="status"></p>
 
@@ -143,9 +153,6 @@
       </div>
 
 
-      <button id="retryButton" class="retry-button" type="button">
-        Atualizar cotação
-      </button>
       </div>
       <section id="conversionHistory" class="tab-panel" aria-labelledby="historyTitle" hidden>
         <button id="closeHistory" class="location-button history-back" type="button">← Voltar ao conversor</button>
