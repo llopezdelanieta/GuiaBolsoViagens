@@ -98,11 +98,10 @@ body[data-theme="light"] {
 }
 
 .app-tabs {
-  overflow-x: auto;
   position: relative;
   display: flex;
-  gap: 6px;
-  padding: 5px;
+  gap: 3px;
+  padding: 4px;
   border: 1px solid var(--line);
   border-radius: 16px;
   background: var(--surface-soft);
@@ -112,10 +111,10 @@ body[data-theme="light"] {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  min-width: 82px;
+  gap: 4px;
+  min-width: 0;
   flex-direction: column;
-  padding: 8px 4px;
+  padding: 6px 2px;
   flex: 1;
   min-height: 42px;
   border: 0;
@@ -123,7 +122,7 @@ body[data-theme="light"] {
   background: transparent;
   color: var(--muted);
   font: inherit;
-  font-size: 0.75rem;
+  font-size: clamp(0.6rem, 2.6vw, 0.75rem);
   font-weight: 700;
   cursor: pointer;
 }
@@ -212,6 +211,33 @@ body[data-theme="light"] {
   border: 1px solid var(--line);
   border-radius: 18px;
   background: var(--surface-soft);
+}
+
+.itinerary-form[hidden] {
+  display: none;
+}
+
+.itinerary-day-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 48px;
+  align-items: end;
+  gap: 10px;
+}
+
+.itinerary-day-row .field {
+  min-width: 0;
+  gap: 6px;
+}
+
+.itinerary-day-row .field input {
+  min-width: 0;
+  min-height: 48px;
+}
+
+.itinerary-day-row .location-button {
+  height: 48px;
+  min-height: 48px;
+  padding: 0;
 }
 
 .itinerary-form .field {
@@ -334,6 +360,38 @@ body[data-theme="light"] {
   list-style: none;
   margin: 0;
   padding: 0;
+}
+
+.activities-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface-soft);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.activities-toggle svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.activities-toggle[aria-expanded="true"] svg {
+  transform: rotate(180deg);
+}
+
+.activities-toggle:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
 }
 
 .task-item {
@@ -861,6 +919,42 @@ h1 {
   color: inherit;
 }
 
+.destination-summary {
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface-soft);
+}
+
+.destination-summary .destination-toggle {
+  padding: 0;
+  min-height: 38px;
+  gap: 8px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+}
+
+.destination-summary .panel-header {
+  gap: 6px 8px;
+  margin-top: 6px;
+}
+
+.destination-summary .panel-badge {
+  padding: 3px 7px;
+  font-size: 0.58rem;
+  letter-spacing: 0.06em;
+}
+
+.destination-summary .quote-summary {
+  gap: 2px 8px;
+  font-size: 0.68rem;
+}
+
+.destination-summary .quote-summary__updated {
+  font-size: 0.62rem;
+}
+
 .destination-flag {
   width: 26px;
   height: 26px;
@@ -1070,6 +1164,23 @@ h1 {
 
 .currency-fields .currency-input input {
   padding-left: 46px;
+  padding-top: 18px;
+  min-height: 60px;
+}
+
+.currency-input .currency-input__name {
+  position: absolute;
+  top: 7px;
+  left: 46px;
+  right: 10px;
+  color: var(--muted);
+  font-size: 0.68rem;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  pointer-events: none;
+  z-index: 1;
 }
 
 .field input {

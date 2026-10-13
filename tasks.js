@@ -2,6 +2,21 @@
   const storageKey = 'guia-de-bolso-tasks';
   const get = (id) => document.getElementById(id);
   const form = get('taskForm');
+  const openFormButton = get('openTaskForm');
+  function showForm(visible) {
+    form.hidden = !visible;
+    openFormButton.setAttribute('aria-expanded', String(visible));
+  }
+  openFormButton.addEventListener('click', () => {
+    if (form.hidden) {
+      resetForm();
+      showForm(true);
+      input.focus();
+    } else {
+      resetForm();
+      showForm(false);
+    }
+  });
   const input = get('taskInput');
   const day = get('itineraryDay');
   const date = get('taskDate');
@@ -11,6 +26,13 @@
   const address = get('taskAddress');
   const list = get('taskList');
   const storageStatus = get('taskStorageStatus');
+  const activitiesToggle = get('toggleActivities');
+  activitiesToggle.addEventListener('click', () => {
+    const expanded = activitiesToggle.getAttribute('aria-expanded') !== 'true';
+    activitiesToggle.setAttribute('aria-expanded', String(expanded));
+    get('activitiesContent').hidden = !expanded;
+    get('toggleActivitiesLabel').textContent = expanded ? 'Recolher atividades' : 'Expandir atividades';
+  });
   const today = new Date();
   const todayKey = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
   day.value = date.value = todayKey;
@@ -98,6 +120,7 @@
         address.value = task.address;
         get('taskSave').textContent = 'Salvar atividade';
         get('taskCancel').hidden = false;
+        showForm(true);
         input.focus();
       });
       const remove = document.createElement('button');
@@ -128,7 +151,11 @@
     resetForm();
     render();
   });
-  get('taskCancel').addEventListener('click', resetForm);
+  get('taskCancel').addEventListener('click', () => {
+    resetForm();
+    showForm(false);
+    openFormButton.focus();
+  });
   form.addEventListener('submit', (event) => {
     event.preventDefault();
     const text = input.value.trim();
@@ -140,7 +167,8 @@
     save();
     resetForm();
     render();
-    input.focus();
+    showForm(false);
+    openFormButton.focus();
   });
   render();
 })();

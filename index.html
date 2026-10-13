@@ -33,16 +33,7 @@
         <button id="translatorTab" role="tab" aria-selected="false" aria-controls="translatorPanel" tabindex="-1" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h12M9 3v2M5 5c1 6 4 9 9 11M13 5c-1 6-4 9-9 11m10 5 4-10 4 10m-6-3h4"/></svg>Tradutor</button>
       </div>
       <div id="converterPanel" class="tab-panel" role="tabpanel" aria-labelledby="converterTab">
-      <div class="panel-header">
-          <span id="quoteMode" class="panel-badge">Tempo real</span>
-        <div class="quote-summary">
-          <span id="exchangeRate" title="Cotação usada">--</span>
-          <span class="quote-summary__updated">Atualizado em <span id="lastUpdated">--</span></span>
-          <span id="statusText" class="status-text" role="status">Pronto para consultar</span>
-        </div>
-      </div>
-
-      <div class="flag-section">
+      <div class="flag-section destination-summary">
         <button id="destinationToggle" class="destination-toggle" data-currency="ARS" type="button" aria-expanded="false" aria-controls="destinationFlags">
           <span class="section-label">Destino</span>
           <img id="selectedCountryFlag" class="destination-flag" src="imagens/argentina.png" alt="" aria-hidden="true">
@@ -51,6 +42,14 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="m6 9 6 6 6-6"/></svg>
           </span>
         </button>
+      <div class="panel-header">
+          <span id="quoteMode" class="panel-badge">Tempo real</span>
+        <div class="quote-summary">
+          <span id="exchangeRate" title="Cotação usada">--</span>
+          <span class="quote-summary__updated">Atualizado em <span id="lastUpdated">--</span></span>
+          <span id="statusText" class="status-text" role="status">Pronto para consultar</span>
+        </div>
+      </div>
         <div id="destinationFlags" class="flag-grid" role="group" aria-label="Selecione o país de destino" hidden>
           <button class="flag-card is-active" type="button" data-currency="ARS" aria-pressed="true" aria-label="Argentina">
             <img class="flag-card__flag" src="imagens/argentina.png" alt="" aria-hidden="true">
@@ -78,8 +77,8 @@
       <form class="converter-form" id="converterForm">
         <div class="currency-fields">
         <label class="field" id="localCurrencyField">
-          <span id="targetAmountLabel">Peso argentino</span>
           <div class="currency-input">
+          <span id="targetAmountLabel" class="currency-input__name">Peso argentino</span>
           <img id="localAmountFlag" class="currency-input__flag" src="imagens/argentina.png" alt="" aria-hidden="true">
           <input
             id="targetAmount"
@@ -93,8 +92,8 @@
         </label>
 
         <label class="field" id="brlCurrencyField">
-          <span>Real</span>
           <div class="currency-input">
+          <span class="currency-input__name">Real</span>
           <img class="currency-input__flag" src="imagens/brasil.svg" alt="" aria-hidden="true">
           <input
             id="amount"
@@ -177,8 +176,13 @@
           <h2>Monte seu roteiro</h2>
           <p>Escolha o dia, planeje suas paradas e acompanhe cada atividade.</p>
         </div>
+        <div class="itinerary-day-row">
         <label class="field"><span>Dia do roteiro</span><input id="itineraryDay" type="date" required></label>
-        <form id="taskForm" class="itinerary-form">
+        <button id="openTaskForm" class="location-button" type="button" aria-label="Incluir atividade" title="Incluir atividade" aria-expanded="false" aria-controls="taskForm">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+        </button>
+        </div>
+        <form id="taskForm" class="itinerary-form" hidden>
           <label class="field itinerary-wide" for="taskInput"><span>Atividade</span>
             <input id="taskInput" type="text" placeholder="Ex.: visitar o Obelisco" maxlength="200" required autocomplete="off">
           </label>
@@ -193,12 +197,17 @@
           </div>
         </form>
         <p id="taskProgress" class="explore-note" role="status"></p>
+        <button id="toggleActivities" class="activities-toggle" type="button" aria-expanded="true" aria-controls="activitiesContent">
+          <span id="toggleActivitiesLabel">Recolher atividades</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div id="activitiesContent">
         <ul id="taskList" class="task-list" aria-label="Checklist de tarefas"></ul>
         <p id="taskEmpty" class="explore-note">Nenhuma atividade neste dia. Cadastre sua primeira parada acima.</p>
+        </div>
         <p id="taskStorageStatus" class="explore-note">Lista salva neste navegador.</p>
       </div>
       <div id="translatorPanel" class="tab-panel" role="tabpanel" aria-labelledby="translatorTab" hidden>
-        <div class="explore-intro"><h2>Entenda e seja entendido</h2><p>Traduza frases para sua viagem.</p></div>
         <form id="translatorForm" class="translator-form">
           <div class="translator-languages">
             <label class="field"><span>De</span><select id="sourceLanguage" aria-label="Idioma de origem"></select></label>
