@@ -1053,6 +1053,10 @@ body::after {
   max-width: 30rem;
 }
 
+.header-copy .brand-heading {
+  flex-wrap: wrap;
+}
+
 .header-actions {
   display: flex;
   align-items: center;
