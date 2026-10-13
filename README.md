@@ -1,4 +1,4 @@
-# Conversor de Moedas para Viagem
+# Guia de Bolso
 
 Aplicação web responsiva em HTML, CSS e JavaScript puro para converter valores de **BRL** para:
 

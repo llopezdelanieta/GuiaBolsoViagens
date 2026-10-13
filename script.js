@@ -14,8 +14,9 @@ const amountInput = document.getElementById("amount");
 const targetAmountInput = document.getElementById("targetAmount");
 const targetAmountLabel = document.getElementById("targetAmountLabel");
 const flagButtons = document.querySelectorAll(".flag-card");
-const convertedValue = document.getElementById("convertedValue");
-const convertedHint = document.getElementById("convertedHint");
+const destinationToggle = document.getElementById("destinationToggle");
+const destinationFlags = document.getElementById("destinationFlags");
+const selectedCountry = document.getElementById("selectedCountry");
 const exchangeRate = document.getElementById("exchangeRate");
 const lastUpdated = document.getElementById("lastUpdated");
 const loadingMessage = document.getElementById("loadingMessage");
@@ -23,12 +24,12 @@ const errorMessage = document.getElementById("errorMessage");
 const retryButton = document.getElementById("retryButton");
 const statusText = document.getElementById("statusText");
 const themeToggle = document.getElementById("themeToggle");
-const themeToggleText = document.getElementById("themeToggleText");
+const themeToggleIcon = document.getElementById("themeToggleIcon");
 
 let quotes = {};
 let activeRequestId = 0;
 let selectedCurrency = "ARS";
-let activeInput = "BRL";
+let activeInput = selectedCurrency;
 
 function formatCurrency(value, currency) {
   return new Intl.NumberFormat("pt-BR", {
@@ -52,16 +53,24 @@ function formatTimestamp(dateValue) {
   }).format(dateValue);
 }
 
-function formatInputValue(value) {
-  if (!Number.isFinite(value)) {
-    return "";
-  }
-
-  return String(Math.round((value + Number.EPSILON) * 100) / 100);
-}
-
 function getQuoteKey(currencyCode) {
   return `BRL${currencyCode}`;
+}
+
+function formatLocalAmount(value) {
+  return new Intl.NumberFormat("pt-BR", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  }).format(value);
+}
+
+function parseLocalAmount(value) {
+  return Number(value.replace(/\./g, "").replace(",", "."));
+}
+
+function maskLocalAmount(input) {
+  const digits = input.value.replace(/\D/g, "");
+  input.value = digits ? formatLocalAmount(Number(digits) / 100) : "";
 }
 
 function setLoadingState(isLoading) {
@@ -81,6 +90,8 @@ function hideError() {
 }
 
 function syncFlagSelection() {
+  selectedCountry.textContent = currencyConfig[selectedCurrency].country;
+  destinationToggle.dataset.currency = selectedCurrency;
   flagButtons.forEach((button) => {
     const isActive = button.dataset.currency === selectedCurrency;
     button.classList.toggle("is-active", isActive);
@@ -88,58 +99,20 @@ function syncFlagSelection() {
   });
 
   targetAmountLabel.textContent = `Valor em ${selectedCurrency}`;
-  targetAmountInput.placeholder = `Ex.: ${selectedCurrency === "ARS" ? "25000,00" : "200,00"}`;
-}
-
-function updateConversionLegacy() {
-  const amount = Number(amountInput.value);
-  const targetInfo = currencyConfig[selectedCurrency];
-  const quote = quotes[getQuoteKey(selectedCurrency)];
-
-  if (!amountInput.value || Number.isNaN(amount) || amount < 0) {
-    convertedValue.textContent = "--";
-    convertedHint.textContent = "Informe um valor válido em BRL para ver a conversão.";
-    exchangeRate.textContent = "--";
-    return;
-  }
-
-  if (!quote) {
-    convertedValue.textContent = "--";
-    convertedHint.textContent = "Aguardando cotação para calcular a conversão.";
-    exchangeRate.textContent = "--";
-    return;
-  }
-
-  const rate = Number(quote.bid);
-  const convertedAmount = amount * rate;
-  const updatedAt = quote.create_date
-    ? new Date(quote.create_date.replace(" ", "T"))
-    : new Date(Number(quote.timestamp) * 1000);
-
-  convertedValue.textContent = formatCurrency(convertedAmount, selectedCurrency);
-  convertedHint.textContent =
-    `${formatCurrency(amount, "BRL")} equivalem a ${targetInfo.currencyName.toLowerCase()} para sua viagem a ${targetInfo.country}.`;
-  exchangeRate.textContent = `1 BRL = ${formatRate(rate, selectedCurrency)}`;
-  lastUpdated.textContent = formatTimestamp(updatedAt);
+  targetAmountInput.placeholder = `Ex.: ${selectedCurrency === "ARS" ? "25.000,00" : "200,00"}`;
 }
 
 function updateConversion() {
-  const targetInfo = currencyConfig[selectedCurrency];
   const quote = quotes[getQuoteKey(selectedCurrency)];
   const sourceInput = activeInput === "BRL" ? amountInput : targetAmountInput;
-  const sourceCurrency = activeInput === "BRL" ? "BRL" : selectedCurrency;
-  const sourceAmount = Number(sourceInput.value);
+  const sourceAmount = parseLocalAmount(sourceInput.value);
 
   if (!sourceInput.value || Number.isNaN(sourceAmount) || sourceAmount < 0) {
-    convertedValue.textContent = "--";
-    convertedHint.textContent = `Informe um valor valido em ${sourceCurrency} para ver a conversao.`;
     exchangeRate.textContent = "--";
     return;
   }
 
   if (!quote) {
-    convertedValue.textContent = "--";
-    convertedHint.textContent = "Aguardando cotacao para calcular a conversao.";
     exchangeRate.textContent = "--";
     return;
   }
@@ -147,23 +120,17 @@ function updateConversion() {
   const rate = Number(quote.bid);
   const amountInBrl = activeInput === "BRL" ? sourceAmount : sourceAmount / rate;
   const amountInTarget = activeInput === "BRL" ? sourceAmount * rate : sourceAmount;
-  const convertedAmount = activeInput === "BRL" ? amountInTarget : amountInBrl;
-  const convertedCurrency = activeInput === "BRL" ? selectedCurrency : "BRL";
-  const originCurrency = activeInput === "BRL" ? "BRL" : selectedCurrency;
   const updatedAt = quote.create_date
     ? new Date(quote.create_date.replace(" ", "T"))
     : new Date(Number(quote.timestamp) * 1000);
 
   if (activeInput === "BRL") {
-    targetAmountInput.value = formatInputValue(amountInTarget);
+    targetAmountInput.value = formatLocalAmount(amountInTarget);
   } else {
-    amountInput.value = formatInputValue(amountInBrl);
+    amountInput.value = formatLocalAmount(amountInBrl);
   }
 
-  convertedValue.textContent = formatCurrency(convertedAmount, convertedCurrency);
-  convertedHint.textContent =
-    `${formatCurrency(sourceAmount, originCurrency)} equivalem a ${formatCurrency(convertedAmount, convertedCurrency)} para sua viagem a ${targetInfo.country}.`;
-  exchangeRate.textContent = `1 BRL = ${formatRate(rate, selectedCurrency)} | 1 ${selectedCurrency} = ${formatCurrency(1 / rate, "BRL")}`;
+  exchangeRate.textContent = `1 BRL = ${formatRate(rate, selectedCurrency)}`;
   lastUpdated.textContent = formatTimestamp(updatedAt);
 }
 
@@ -203,7 +170,10 @@ async function fetchQuotes() {
 
 function applyTheme(theme) {
   document.body.dataset.theme = theme;
-  themeToggleText.textContent = theme === "dark" ? "Modo claro" : "Modo escuro";
+  const label = theme === "dark" ? "Ativar modo claro" : "Ativar modo noturno";
+  themeToggleIcon.textContent = theme === "dark" ? "☀" : "☾";
+  themeToggle.setAttribute("aria-label", label);
+  themeToggle.title = label;
   localStorage.setItem(themeStorageKey, theme);
 }
 
@@ -216,20 +186,85 @@ function initializeTheme() {
 }
 
 amountInput.addEventListener("input", () => {
+  maskLocalAmount(amountInput);
   activeInput = "BRL";
   updateConversion();
 });
 
+let keypadInput = amountInput;
+
+const swapCurrencies = document.getElementById("swapCurrencies");
+const localCurrencyField = document.getElementById("localCurrencyField");
+const brlCurrencyField = document.getElementById("brlCurrencyField");
+
+swapCurrencies.addEventListener("click", () => {
+  const form = swapCurrencies.parentElement;
+  const localFirst = form.firstElementChild === localCurrencyField;
+  const firstField = localFirst ? brlCurrencyField : localCurrencyField;
+  const secondField = localFirst ? localCurrencyField : brlCurrencyField;
+
+  form.insertBefore(firstField, form.firstElementChild);
+  form.insertBefore(secondField, swapCurrencies);
+  keypadInput = firstField.querySelector("input");
+});
+
+[amountInput, targetAmountInput].forEach((input) => {
+  input.addEventListener("focus", () => {
+    keypadInput = input;
+  });
+});
+
+document.getElementById("numericKeypad").addEventListener("click", (event) => {
+  const button = event.target.closest("button[data-key]");
+  if (!button) return;
+
+  const key = button.dataset.key;
+  let digits = keypadInput.value.replace(/\D/g, "");
+  if (key === "clear") {
+    amountInput.value = formatLocalAmount(0);
+    targetAmountInput.value = formatLocalAmount(0);
+    activeInput = keypadInput === amountInput ? "BRL" : selectedCurrency;
+    updateConversion();
+    return;
+  } else if (key === "backspace") {
+    digits = digits.slice(0, -1);
+  } else {
+    digits += key;
+  }
+
+  keypadInput.value = digits;
+  keypadInput.dispatchEvent(new Event("input", { bubbles: true }));
+});
+
 targetAmountInput.addEventListener("input", () => {
+  maskLocalAmount(targetAmountInput);
   activeInput = selectedCurrency;
   updateConversion();
+});
+
+function setDestinationsExpanded(expanded) {
+  destinationToggle.setAttribute("aria-expanded", String(expanded));
+  destinationFlags.hidden = !expanded;
+}
+
+destinationToggle.addEventListener("click", () => {
+  setDestinationsExpanded(destinationFlags.hidden);
+});
+
+destinationFlags.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") {
+    setDestinationsExpanded(false);
+    destinationToggle.focus();
+  }
 });
 
 flagButtons.forEach((button) => {
   button.addEventListener("click", () => {
     selectedCurrency = button.dataset.currency;
-    activeInput = "BRL";
+    activeInput = selectedCurrency;
     syncFlagSelection();
+    setDestinationsExpanded(false);
+    destinationToggle.focus();
     updateConversion();
     fetchQuotes();
   });

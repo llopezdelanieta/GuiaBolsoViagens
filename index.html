@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Conversor de Moedas para Viagem</title>
+  <title>Guia de Bolso</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
@@ -15,28 +15,30 @@
       <div class="topbar">
         <div class="header-copy">
           <span class="eyebrow">Tech travel exchange</span>
-          <h1>Conversor de Moedas para Viagem</h1>
-          <p class="hero-text">
-            Toque na bandeira, preencha o valor em BRL e veja a conversão em tempo real.
-          </p>
+          <h1>Guia de Bolso</h1>
         </div>
 
         <button id="themeToggle" class="theme-toggle" type="button" aria-label="Alternar tema">
-          <span class="theme-toggle__icon" aria-hidden="true">◐</span>
-          <span id="themeToggleText">Modo claro</span>
+          <span id="themeToggleIcon" class="theme-toggle__icon" aria-hidden="true">☀</span>
         </button>
       </div>
 
       <div class="panel-header">
-        <div>
-          <span class="panel-badge">Tempo real</span>
-          <span id="statusText" class="status-text">Pronto para consultar</span>
+        <span class="panel-badge">Tempo real</span>
+        <div class="quote-summary">
+          <span id="exchangeRate" title="Cotação usada">--</span>
+          <span class="quote-summary__updated">Atualizado em <span id="lastUpdated">--</span></span>
+          <span id="statusText" class="status-text" role="status">Pronto para consultar</span>
         </div>
       </div>
 
       <div class="flag-section">
-        <span class="section-label">Destino</span>
-        <div class="flag-grid" role="radiogroup" aria-label="Selecione o país de destino">
+        <button id="destinationToggle" class="destination-toggle" data-currency="ARS" type="button" aria-expanded="false" aria-controls="destinationFlags">
+          <span class="section-label">Destino</span>
+          <span id="selectedCountry">Argentina</span>
+          <span class="destination-toggle__arrow" aria-hidden="true">⌄</span>
+        </button>
+        <div id="destinationFlags" class="flag-grid" role="group" aria-label="Selecione o país de destino" hidden>
           <button class="flag-card is-active" type="button" data-currency="ARS" aria-pressed="true" aria-label="Argentina">
             <img class="flag-card__flag" src="imagens/argentina.png" alt="" aria-hidden="true">
             <span class="flag-card__name">Argentina</span>
@@ -61,32 +63,50 @@
       </div>
 
       <form class="converter-form" id="converterForm">
-        <label class="field">
-          <span>Valor em BRL</span>
-          <input
-            id="amount"
-            name="amount"
-            type="number"
-            min="0"
-            step="0.01"
-            inputmode="decimal"
-            placeholder="Ex.: 1500,00"
-            value="1000"
-          >
-        </label>
-
-        <label class="field">
+        <div class="currency-fields">
+        <label class="field" id="localCurrencyField">
           <span id="targetAmountLabel">Valor em ARS</span>
           <input
             id="targetAmount"
             name="targetAmount"
-            type="number"
-            min="0"
-            step="0.01"
+            type="text"
             inputmode="decimal"
-            placeholder="Ex.: 25000,00"
+            placeholder="Ex.: 25.000,00"
+            value="1.000,00"
           >
         </label>
+
+        <label class="field" id="brlCurrencyField">
+          <span>Valor em real (BRL)</span>
+          <input
+            id="amount"
+            name="amount"
+            type="text"
+            inputmode="decimal"
+            placeholder="Ex.: 1.500,00"
+          >
+        </label>
+        <button id="swapCurrencies" class="swap-currencies" type="button" aria-label="Inverter a posição dos campos de moeda" title="Inverter campos">
+          <svg class="swap-currencies__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+            <path d="M8 19V5m-4 4 4-4 4 4" />
+            <path d="M16 5v14m-4-4 4 4 4-4" />
+          </svg>
+        </button>
+        </div>
+        <div id="numericKeypad" class="numeric-keypad" role="group" aria-label="Teclado numérico para os valores das moedas">
+          <button type="button" data-key="1">1</button>
+          <button type="button" data-key="2">2</button>
+          <button type="button" data-key="3">3</button>
+          <button type="button" data-key="4">4</button>
+          <button type="button" data-key="5">5</button>
+          <button type="button" data-key="6">6</button>
+          <button type="button" data-key="7">7</button>
+          <button type="button" data-key="8">8</button>
+          <button type="button" data-key="9">9</button>
+          <button type="button" data-key="clear" aria-label="Zerar os dois valores">C</button>
+          <button type="button" data-key="0">0</button>
+          <button type="button" data-key="backspace" aria-label="Apagar último dígito">⌫</button>
+        </div>
       </form>
 
       <div id="loadingMessage" class="feedback feedback--loading" hidden>
@@ -97,25 +117,6 @@
         Não foi possível buscar a cotação agora. Tente novamente em instantes.
       </div>
 
-      <section class="result-panel">
-        <p class="result-label">Resultado da conversão</p>
-        <p id="convertedValue" class="result-value">--</p>
-        <p id="convertedHint" class="result-hint">
-          Digite um valor em BRL e toque em uma bandeira para escolher o destino.
-        </p>
-      </section>
-
-      <div class="info-stack">
-        <section class="detail-card">
-          <p class="detail-card__label">Cotação usada</p>
-          <p id="exchangeRate" class="detail-card__value">--</p>
-        </section>
-
-        <section class="detail-card">
-          <p class="detail-card__label">Última atualização</p>
-          <p id="lastUpdated" class="detail-card__value">--</p>
-        </section>
-      </div>
 
       <button id="retryButton" class="retry-button" type="button">
         Atualizar cotação

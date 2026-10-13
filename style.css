@@ -124,6 +124,8 @@ body::after {
 
 .topbar {
   display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
   gap: 14px;
 }
 
@@ -175,12 +177,13 @@ h1 {
 }
 
 .theme-toggle {
-  justify-self: start;
+  justify-self: end;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  justify-content: center;
+  width: 42px;
   min-height: 42px;
-  padding: 0 14px;
+  padding: 0;
   color: var(--text);
   background: var(--surface-soft);
   border-radius: 999px;
@@ -188,12 +191,12 @@ h1 {
 
 .theme-toggle__icon {
   color: var(--primary);
-  font-size: 1rem;
+  font-size: 1.4rem;
 }
 
 .panel-header {
   display: flex;
-  justify-content: space-between;
+  flex-wrap: wrap;
   align-items: center;
   gap: 12px;
 }
@@ -214,6 +217,35 @@ h1 {
   color: var(--muted);
 }
 
+.panel-badge {
+  flex-shrink: 0;
+}
+
+.quote-summary {
+  display: flex;
+  flex: 1 1 180px;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 12px;
+  color: var(--muted);
+  font-size: 0.72rem;
+  line-height: 1.5;
+}
+
+.quote-summary__updated {
+  font-size: 0.68rem;
+}
+
+.quote-summary .status-text {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
 .flag-section,
 .converter-form,
 .result-panel,
@@ -232,7 +264,77 @@ h1 {
   font-weight: 700;
 }
 
+.destination-toggle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface-soft);
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.destination-toggle .section-label {
+  margin-bottom: 0;
+  color: inherit;
+}
+
+.destination-toggle[data-currency] {
+  color: #172b45;
+  text-shadow: none;
+  border-color: rgba(255, 255, 255, 0.45);
+  background-image: linear-gradient(rgba(255, 255, 255, 0.76), rgba(255, 255, 255, 0.76)), var(--destination-flag);
+}
+
+.destination-toggle[data-currency="ARS"] {
+  --destination-flag: linear-gradient(to bottom, #74acdf 0% 33.33%, #ffffff 33.33% 66.67%, #74acdf 66.67% 100%);
+}
+
+.destination-toggle[data-currency="USD"] {
+  --destination-flag: linear-gradient(to right, #3c3b6e 0% 30%, transparent 30%), repeating-linear-gradient(to bottom, #b22234 0px 7px, #ffffff 7px 14px);
+}
+
+.destination-toggle[data-currency="CAD"] {
+  --destination-flag: linear-gradient(to right, #d80621 0% 25%, #ffffff 25% 75%, #d80621 75% 100%);
+}
+
+.destination-toggle[data-currency="GBP"] {
+  --destination-flag: linear-gradient(to bottom, transparent 38%, #ffffff 38% 43%, #c8102e 43% 57%, #ffffff 57% 62%, transparent 62%), linear-gradient(to right, transparent 43%, #ffffff 43% 46%, #c8102e 46% 54%, #ffffff 54% 57%, transparent 57%), linear-gradient(25deg, transparent 45%, #ffffff 45% 48%, #c8102e 48% 52%, #ffffff 52% 55%, transparent 55%), linear-gradient(-25deg, #012169 45%, #ffffff 45% 48%, #c8102e 48% 52%, #ffffff 52% 55%, #012169 55%);
+}
+
+.destination-toggle[data-currency="EUR"] {
+  --destination-flag: linear-gradient(to bottom, #aa151b 0% 25%, #f1bf00 25% 75%, #aa151b 75% 100%);
+}
+
+#selectedCountry {
+  font-weight: 700;
+}
+
+.destination-toggle__arrow {
+  margin-left: auto;
+}
+
+.destination-toggle[aria-expanded="true"] .destination-toggle__arrow {
+  transform: rotate(180deg);
+}
+
+.destination-toggle:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+}
+
+.flag-grid[hidden] {
+  display: none;
+}
+
 .flag-grid {
+  margin-top: 10px;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
@@ -282,9 +384,98 @@ h1 {
   gap: 12px;
 }
 
+.numeric-keypad {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.swap-currencies {
+  display: grid;
+  place-items: center;
+  grid-column: 2;
+  grid-row: 1 / 3;
+  align-self: center;
+  justify-self: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--line-strong);
+  border-radius: 50%;
+  background: linear-gradient(145deg, var(--primary-glow), var(--surface-strong));
+  color: var(--primary);
+  font: inherit;
+  font-size: 1.5rem;
+  cursor: pointer;
+  touch-action: manipulation;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 4px 12px rgba(0, 0, 0, 0.14);
+  transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.swap-currencies__icon {
+  width: 23px;
+  height: 23px;
+}
+
+.swap-currencies:hover {
+  background: var(--primary-glow);
+  border-color: var(--primary);
+  transform: translateY(-1px);
+}
+
+.swap-currencies:active {
+  transform: scale(0.94);
+}
+
+.swap-currencies:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+}
+
+.numeric-keypad button {
+  min-height: 48px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface-soft);
+  color: var(--text);
+  font: inherit;
+  font-size: 1.2rem;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.numeric-keypad button:hover {
+  background: var(--primary-glow);
+}
+
+.numeric-keypad button:active {
+  transform: scale(0.97);
+}
+
+.numeric-keypad button:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
 .field span {
   font-size: 0.88rem;
   font-weight: 700;
+}
+
+.currency-fields {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 44px;
+  gap: 10px 12px;
+}
+
+.currency-fields .field {
+  grid-column: 1;
+  gap: 6px;
+}
+
+.currency-fields .field input {
+  min-height: 44px;
+  padding: 0 12px;
+  border-radius: 12px;
 }
 
 .field input {
