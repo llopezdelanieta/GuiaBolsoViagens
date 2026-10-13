@@ -91,7 +91,8 @@ function hideError() {
 
 function syncFlagSelection() {
   selectedCountry.textContent = currencyConfig[selectedCurrency].country;
-  destinationToggle.dataset.currency = selectedCurrency;
+  const selectedFlag = [...flagButtons].find((button) => button.dataset.currency === selectedCurrency);
+  document.getElementById("selectedCountryFlag").src = selectedFlag.querySelector("img").getAttribute("src");
   flagButtons.forEach((button) => {
     const isActive = button.dataset.currency === selectedCurrency;
     button.classList.toggle("is-active", isActive);

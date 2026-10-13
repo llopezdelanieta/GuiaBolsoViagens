@@ -529,31 +529,12 @@ h1 {
   color: inherit;
 }
 
-.destination-toggle[data-currency] {
-  color: #172b45;
-  text-shadow: none;
-  border-color: rgba(255, 255, 255, 0.45);
-  background-image: linear-gradient(rgba(255, 255, 255, 0.76), rgba(255, 255, 255, 0.76)), var(--destination-flag);
-}
-
-.destination-toggle[data-currency="ARS"] {
-  --destination-flag: linear-gradient(to bottom, #74acdf 0% 33.33%, #ffffff 33.33% 66.67%, #74acdf 66.67% 100%);
-}
-
-.destination-toggle[data-currency="USD"] {
-  --destination-flag: linear-gradient(to right, #3c3b6e 0% 30%, transparent 30%), repeating-linear-gradient(to bottom, #b22234 0px 7px, #ffffff 7px 14px);
-}
-
-.destination-toggle[data-currency="CAD"] {
-  --destination-flag: linear-gradient(to right, #d80621 0% 25%, #ffffff 25% 75%, #d80621 75% 100%);
-}
-
-.destination-toggle[data-currency="GBP"] {
-  --destination-flag: linear-gradient(to bottom, transparent 38%, #ffffff 38% 43%, #c8102e 43% 57%, #ffffff 57% 62%, transparent 62%), linear-gradient(to right, transparent 43%, #ffffff 43% 46%, #c8102e 46% 54%, #ffffff 54% 57%, transparent 57%), linear-gradient(25deg, transparent 45%, #ffffff 45% 48%, #c8102e 48% 52%, #ffffff 52% 55%, transparent 55%), linear-gradient(-25deg, #012169 45%, #ffffff 45% 48%, #c8102e 48% 52%, #ffffff 52% 55%, #012169 55%);
-}
-
-.destination-toggle[data-currency="EUR"] {
-  --destination-flag: linear-gradient(to bottom, #aa151b 0% 25%, #f1bf00 25% 75%, #aa151b 75% 100%);
+.destination-flag {
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+  object-fit: cover;
+  border-radius: 50%;
 }
 
 #selectedCountry {
@@ -562,6 +543,21 @@ h1 {
 
 .destination-toggle__arrow {
   margin-left: auto;
+  display: grid;
+  place-items: center;
+  flex: 0 0 32px;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.65);
+  color: #172b45;
+  border: 1px solid rgba(23, 43, 69, 0.16);
+  transition: transform 160ms ease;
+}
+
+.destination-toggle__arrow svg {
+  width: 22px;
+  height: 22px;
 }
 
 .destination-toggle[aria-expanded="true"] .destination-toggle__arrow {
