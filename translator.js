@@ -28,9 +28,10 @@
     speakTranslation.disabled = !canSpeak || !result.value.trim();
   }
   function stopSpeaking() {
+    const hadUtterance = Boolean(utterance);
     utterance = null;
     clearTimeout(speechTimer);
-    if (synthesis?.speaking || synthesis?.pending) synthesis.cancel();
+    if (canSpeak && (hadUtterance || synthesis.speaking || synthesis.pending || synthesis.paused)) synthesis.cancel();
     stopAudio.disabled = true;
   }
   function stopDictation() {
@@ -49,9 +50,17 @@
     const speech = new window.SpeechSynthesisUtterance(text.trim());
     utterance = speech;
     speech.lang = speechLanguages[language];
+    speech.volume = 1;
+    speech.rate = 1;
+    speech.pitch = 1;
     refreshVoices();
-    const voice = voices.find((item) => item.lang.toLowerCase() === speech.lang.toLowerCase())
-      || voices.find((item) => item.lang.split('-')[0] === language);
+    const normalizeLanguage = (value) => value.replace(/_/g, '-').toLowerCase();
+    const matchingVoices = voices.filter((item) => normalizeLanguage(item.lang).split('-')[0] === language);
+    // Prefer installed voices: network voices can be listed but unavailable on iOS.
+    const voice = matchingVoices.find((item) => item.localService && normalizeLanguage(item.lang) === normalizeLanguage(speech.lang))
+      || matchingVoices.find((item) => item.localService)
+      || matchingVoices.find((item) => normalizeLanguage(item.lang) === normalizeLanguage(speech.lang))
+      || matchingVoices[0];
     if (voice) speech.voice = voice;
     speech.onstart = () => {
       if (utterance !== speech) return;
@@ -60,12 +69,14 @@
     };
     speech.onend = () => {
       if (utterance !== speech) return;
+      utterance = null;
       clearTimeout(speechTimer);
       stopAudio.disabled = true;
       audioStatus.textContent = 'Leitura concluída.';
     };
     speech.onerror = (event) => {
       if (utterance !== speech) return;
+      utterance = null;
       clearTimeout(speechTimer);
       stopAudio.disabled = true;
       audioStatus.textContent = event.error === 'not-allowed'
@@ -80,8 +91,10 @@
       audioStatus.textContent = 'O áudio não iniciou. Confira o volume, abra no Safari e toque em Ouvir novamente.';
     }, 10000);
     try {
+      // cancel() does not clear the paused state. Resume before enqueueing,
+      // within the click handler so Safari retains the user activation.
+      synthesis.resume();
       synthesis.speak(speech);
-      if (synthesis.paused) synthesis.resume();
     } catch {
       stopSpeaking();
       audioStatus.textContent = 'Não foi possível iniciar o áudio neste navegador.';

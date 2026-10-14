@@ -1,4 +1,4 @@
-const CACHE = 'guia-de-bolso-offline-v4';
+const CACHE = 'guia-de-bolso-offline-v5';
 const ASSETS = ['./', './index.html', './style.css', './script.js', './explore.js', './tasks.js',
   './translator.js', './conversion-history.js', './weather.js', './sos.js', './expenses.js', './imagens/argentina.png', './imagens/brasil.svg',
   './imagens/canada.png', './imagens/espanha.png', './imagens/estados-unidos.png',
