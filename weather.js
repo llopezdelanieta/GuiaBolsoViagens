@@ -5,6 +5,20 @@
   let selectedPlace;
   let controller;
   let requestId = 0;
+  function selectMode(location) {
+    controller?.abort();
+    ++requestId;
+    finish(requestId);
+    get('weatherLocate').hidden = !location;
+    get('weatherSearch').hidden = location;
+    get('weatherModeLocation').setAttribute('aria-pressed', String(location));
+    get('weatherModeCity').setAttribute('aria-pressed', String(!location));
+    get('weatherCities').replaceChildren();
+    status.textContent = result.hidden ? location ? 'Toque em Usar minha localização para consultar o clima.' : 'Digite uma cidade para consultar o clima.' : '';
+    if (!location) get('weatherCity').focus();
+  }
+  get('weatherModeLocation').addEventListener('click', () => selectMode(true));
+  get('weatherModeCity').addEventListener('click', () => selectMode(false));
 
   function condition(code) {
     if (code === 0) return '☀️ Céu limpo';

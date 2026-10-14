@@ -270,7 +270,10 @@
       </div>
       <div id="weatherPanel" class="tab-panel" role="tabpanel" aria-labelledby="weatherTab" hidden>
         <div class="explore-intro"><h2>Clima e tempo</h2><p>Confira as condições atuais e planeje os próximos dias da viagem.</p></div>
-        <form id="weatherSearch" class="weather-search">
+        <div class="weather-mode" role="group" aria-label="Como consultar o clima">
+          <button id="weatherModeLocation" type="button" aria-pressed="true" aria-controls="weatherLocate">Minha localização</button>
+          <button id="weatherModeCity" type="button" aria-pressed="false" aria-controls="weatherSearch">Buscar cidade</button>
+        </div>
         <button id="weatherLocate" class="location-button" type="button">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2.5"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3"/></svg>
           <span class="location-button__content">
@@ -278,6 +281,7 @@
             <span id="weatherLocationState" class="location-state" role="status">Localização ainda não ativada</span>
           </span>
         </button>
+        <form id="weatherSearch" class="weather-search" hidden>
           <label class="field"><span>Buscar cidade</span><input id="weatherCity" type="search" placeholder="Ex.: São Paulo" minlength="2" maxlength="100" required></label>
           <button class="location-button" type="submit">Buscar</button>
         </form>
