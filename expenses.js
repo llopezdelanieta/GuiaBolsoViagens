@@ -5,6 +5,7 @@
   const openForm = get('openExpenseForm');
   function setFormOpen(open) {
     form.hidden = !open;
+    get('expensesPanel').querySelector('.expense-summary').hidden = open;
     openForm.setAttribute('aria-expanded', String(open));
     if (open) description.focus();
   }

@@ -6,6 +6,11 @@ function selectTab(tab) {
     item.tabIndex = selected ? 0 : -1;
     document.getElementById(item.getAttribute('aria-controls')).hidden = !selected;
   });
+  const menu = tab.parentElement;
+  const left = tab.offsetLeft;
+  const right = left + tab.offsetWidth;
+  if (left < menu.scrollLeft) menu.scrollLeft = left;
+  else if (right > menu.scrollLeft + menu.clientWidth) menu.scrollLeft = right - menu.clientWidth;
 }
 tabs.forEach((tab, index) => {
   tab.addEventListener('click', () => selectTab(tab));

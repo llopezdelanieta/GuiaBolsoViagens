@@ -107,7 +107,7 @@
     recognition = active;
     active.lang = speechLanguages[source.value];
     active.continuous = false;
-    active.interimResults = false;
+    active.interimResults = true;
     const original = input.value.trim();
     dictate.setAttribute('aria-pressed', 'true');
     dictate.querySelector('span').textContent = 'Parar ditado';
@@ -122,7 +122,7 @@
     }, 30000);
     active.onresult = (event) => {
       if (recognition !== active) return;
-      const transcript = Array.from(event.results).filter((item) => item.isFinal).map((item) => item[0].transcript).join(' ');
+      const transcript = Array.from(event.results).map((item) => item[0].transcript).join(' ');
       const text = [original, transcript].filter(Boolean).join(' ');
       let limited = '';
       for (const character of text) {
@@ -131,7 +131,10 @@
       }
       input.value = limited;
       input.dispatchEvent(new Event('input', { bubbles: true }));
-      audioStatus.textContent = limited.length < text.length ? 'Ditado inserido até o limite de 500 bytes.' : 'Ditado inserido. Toque em Traduzir.';
+      input.scrollTop = input.scrollHeight;
+      const complete = Array.from(event.results).every((item) => item.isFinal);
+      audioStatus.textContent = limited.length < text.length ? 'Ditado inserido até o limite de 500 bytes.'
+        : complete ? 'Ditado inserido. Toque em Traduzir.' : 'Ouvindo… Preenchendo o texto para traduzir.';
     };
     active.onerror = (event) => {
       if (recognition !== active) return;

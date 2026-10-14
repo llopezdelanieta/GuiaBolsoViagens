@@ -435,6 +435,26 @@ body[data-theme="light"] .weather-forecast li::after {
   gap: 12px;
 }
 
+@media (max-width: 699px) {
+  .app-tabs {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 2px;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .app-tabs button {
+    min-width: 0;
+    min-height: 56px;
+    padding: 8px 0;
+    gap: 6px;
+    font-size: clamp(0.5rem, 2.2vw, 0.65rem);
+    white-space: nowrap;
+    overflow-wrap: normal;
+  }
+}
+
 .expense-day {
   min-width: 0;
   grid-template-columns: minmax(0, 1fr);
@@ -454,6 +474,10 @@ body[data-theme="light"] .weather-forecast li::after {
   border: 1px solid var(--line-strong);
   border-radius: 18px;
   background: linear-gradient(120deg, var(--primary-glow), var(--surface-soft));
+}
+
+#expensesPanel .expense-summary[hidden] {
+  display: none;
 }
 
 .expense-summary > strong {
@@ -2043,6 +2067,18 @@ body[data-theme="light"] .result-panel {
 .theme-toggle:active,
 .flag-card:active {
   transform: translateY(0);
+}
+
+@media (max-width: 699px) {
+  .app-shell {
+    width: 100%;
+    padding: 8px max(6px, env(safe-area-inset-right)) 20px max(6px, env(safe-area-inset-left));
+  }
+
+  .app-card {
+    padding: 12px;
+    border-radius: 20px;
+  }
 }
 
 @media (min-width: 700px) {
